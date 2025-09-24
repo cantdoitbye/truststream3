@@ -1,0 +1,93 @@
+{
+  "validation_results": {
+    "success_rate": 85.71428571428571,
+    "status": "\u2705 FUNCTIONAL",
+    "capabilities": {
+      "Organizational Learning": true,
+      "Hierarchical Analysis": true,
+      "Objective Cascading": true,
+      "Resource Coordination": true,
+      "Structure Optimization": true,
+      "Conflict Resolution": true,
+      "Agent Responsiveness": false
+    },
+    "working_capabilities": 6,
+    "total_capabilities": 7
+  },
+  "detailed_results": [
+    {
+      "test_name": "Agent Responsiveness",
+      "success": false,
+      "timestamp": 1758336466.8079932,
+      "details": {
+        "status_code": 500,
+        "response_time_ms": 149.54,
+        "agent_reachable": false
+      }
+    },
+    {
+      "test_name": "Organizational Learning",
+      "success": true,
+      "timestamp": 1758336468.6151588,
+      "details": {
+        "learning_id": "8949354e-c8c7-465b-b119-c1580fce4bdc",
+        "patterns_identified": 3,
+        "confidence_score": 0.8,
+        "success_patterns_count": 3
+      }
+    },
+    {
+      "test_name": "Hierarchical Structure Analysis",
+      "success": true,
+      "timestamp": 1758336469.3397493,
+      "details": {
+        "structure_efficiency": 1,
+        "recommendations_count": 2,
+        "optimization_opportunities": 3
+      }
+    },
+    {
+      "test_name": "Objective Cascading Logic",
+      "success": true,
+      "timestamp": 1758336470.3609724,
+      "details": {
+        "cascade_id": "45126451-02b0-4166-bf34-191ca8840d59",
+        "success_probability": null,
+        "monitoring_interval": "7_days"
+      }
+    },
+    {
+      "test_name": "Resource Coordination",
+      "success": true,
+      "timestamp": 1758336470.8178382,
+      "details": {
+        "coordination_id": "513c1ece-561d-46af-9212-83cb11865e8c",
+        "efficiency_gain": "10-20%",
+        "implementation_steps_count": 3
+      }
+    },
+    {
+      "test_name": "Structure Optimization",
+      "success": true,
+      "timestamp": 1758336470.9504766,
+      "details": {
+        "optimization_id": "59e860f3-2fc3-4b9b-9eb2-535dde5029c5",
+        "current_efficiency": 0.75,
+        "suggestions_count": 3,
+        "expected_improvement": "15-25%"
+      }
+    },
+    {
+      "test_name": "Conflict Resolution",
+      "success": true,
+      "timestamp": 1758336471.0740006,
+      "details": {
+        "resolution_id": "5bc5f086-d038-4543-8db8-e43a54561c49",
+        "conflicts_analyzed": 0,
+        "preventive_measures_count": 3
+      }
+    }
+  ],
+  "timestamp": 1758336471.0793326,
+  "agent_url": "https://etretluugvclmydzlfte.supabase.co/functions/v1/daughter-community-rag-agent"
+}

@@ -1,0 +1,55 @@
+# TrustStream v4.2 - Main Service (Traffic Router)
+# Author: MiniMax Agent
+# This service routes traffic between blue and green deployments
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: truststream-service
+  namespace: truststream-staging
+  labels:
+    app: truststream
+    component: main-service
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+    service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/health"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 443
+    protocol: TCP
+  selector:
+    app: truststream
+    slot: blue  # This will be updated during deployment
+  sessionAffinity: None
+  loadBalancerSourceRanges: []
+---
+# Internal service for health checks and internal communication
+apiVersion: v1
+kind: Service
+metadata:
+  name: truststream-internal
+  namespace: truststream-staging
+  labels:
+    app: truststream
+    component: internal-service
+spec:
+  type: ClusterIP
+  ports:
+  - name: app
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  selector:
+    app: truststream
+  sessionAffinity: None

@@ -1,0 +1,455 @@
+# AI-Driven Cost Optimization Engine
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cost-optimization
+  labels:
+    istio-injection: enabled
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cost-optimizer
+  namespace: cost-optimization
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cost-optimizer
+  template:
+    metadata:
+      labels:
+        app: cost-optimizer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: cost-optimizer
+      containers:
+      - name: cost-optimizer
+        image: quay.io/trustram/cost-optimizer:v4.4.0
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: cloud-credentials
+              key: aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloud-credentials
+              key: aws-secret-access-key
+        - name: AZURE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: cloud-credentials
+              key: azure-client-id
+        - name: AZURE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cloud-credentials
+              key: azure-client-secret
+        - name: AZURE_TENANT_ID
+          valueFrom:
+            secretKeyRef:
+              name: cloud-credentials
+              key: azure-tenant-id
+        - name: GCP_SERVICE_ACCOUNT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloud-credentials
+              key: gcp-service-account-key
+        - name: PROMETHEUS_URL
+          value: "http://prometheus.monitoring.svc.cluster.local:9090"
+        - name: OPTIMIZATION_INTERVAL
+          value: "300"  # 5 minutes
+        - name: TARGET_COST_REDUCTION
+          value: "0.4"   # 40% target reduction
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/cost-optimizer
+        - name: models
+          mountPath: /opt/models
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: config
+        configMap:
+          name: cost-optimizer-config
+      - name: models
+        persistentVolumeClaim:
+          claimName: ml-models-pvc
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cost-optimizer
+  namespace: cost-optimization
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cost-optimizer
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "pods", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "statefulsets"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["nodes", "pods"]
+  verbs: ["get", "list"]
+- apiGroups: ["cluster.x-k8s.io"]
+  resources: ["clusters", "machines", "machinesets"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+- apiGroups: ["infrastructure.cluster.x-k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cost-optimizer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cost-optimizer
+subjects:
+- kind: ServiceAccount
+  name: cost-optimizer
+  namespace: cost-optimization
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cost-optimizer-config
+  namespace: cost-optimization
+data:
+  config.yaml: |
+    optimization:
+      target_cost_reduction: 0.4
+      evaluation_interval: 300s
+      minimum_confidence: 0.8
+      safety_threshold: 0.1
+    
+    cloud_providers:
+      aws:
+        regions:
+          - us-east-1
+          - us-west-2
+          - eu-west-1
+        instance_types:
+          compute_optimized: ["c5.large", "c5.xlarge", "c5.2xlarge", "c5.4xlarge"]
+          memory_optimized: ["r5.large", "r5.xlarge", "r5.2xlarge", "r5.4xlarge"]
+          general_purpose: ["m5.large", "m5.xlarge", "m5.2xlarge", "m5.4xlarge"]
+          burstable: ["t3.medium", "t3.large", "t3.xlarge", "t3.2xlarge"]
+        spot_instances:
+          enabled: true
+          max_percentage: 70
+          interruption_handling: true
+      
+      azure:
+        regions:
+          - eastus
+          - westus2
+          - westeurope
+        vm_sizes:
+          compute_optimized: ["Standard_F2s_v2", "Standard_F4s_v2", "Standard_F8s_v2"]
+          memory_optimized: ["Standard_E2s_v3", "Standard_E4s_v3", "Standard_E8s_v3"]
+          general_purpose: ["Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3"]
+        spot_instances:
+          enabled: true
+          max_percentage: 60
+      
+      gcp:
+        regions:
+          - us-central1
+          - us-east1
+          - europe-west1
+        machine_types:
+          compute_optimized: ["c2-standard-4", "c2-standard-8", "c2-standard-16"]
+          memory_optimized: ["n1-highmem-2", "n1-highmem-4", "n1-highmem-8"]
+          general_purpose: ["n1-standard-2", "n1-standard-4", "n1-standard-8"]
+        preemptible_instances:
+          enabled: true
+          max_percentage: 80
+    
+    ml_models:
+      cost_prediction:
+        model_path: "/opt/models/cost_prediction.pkl"
+        features:
+          - cpu_utilization
+          - memory_utilization
+          - network_io
+          - disk_io
+          - request_rate
+          - response_time
+        training_data_retention: 30d
+      
+      workload_classification:
+        model_path: "/opt/models/workload_classifier.pkl"
+        classes:
+          - compute_intensive
+          - memory_intensive
+          - io_intensive
+          - network_intensive
+          - balanced
+      
+      demand_forecasting:
+        model_path: "/opt/models/demand_forecast.pkl"
+        forecast_horizon: 24h
+        seasonality_periods: ["daily", "weekly"]
+    
+    optimization_strategies:
+      - name: "right_sizing"
+        enabled: true
+        priority: 1
+        conditions:
+          - cpu_utilization < 30
+          - memory_utilization < 40
+        actions:
+          - downsize_instance
+          - enable_burstable
+      
+      - name: "spot_optimization"
+        enabled: true
+        priority: 2
+        conditions:
+          - workload_type != "critical"
+          - interruption_tolerance > 0.8
+        actions:
+          - migrate_to_spot
+          - implement_checkpointing
+      
+      - name: "multi_cloud_arbitrage"
+        enabled: true
+        priority: 3
+        conditions:
+          - cost_difference > 0.15
+          - migration_cost < savings
+        actions:
+          - migrate_workload
+          - update_dns_routing
+      
+      - name: "resource_scheduling"
+        enabled: true
+        priority: 4
+        conditions:
+          - predictable_demand_pattern
+          - non_realtime_workload
+        actions:
+          - schedule_batch_jobs
+          - implement_auto_shutdown
+    
+    alerts:
+      cost_spike:
+        threshold: 0.25  # 25% increase
+        window: 1h
+      
+      optimization_failure:
+        threshold: 3  # consecutive failures
+        window: 15m
+      
+      savings_target_miss:
+        threshold: 0.1  # 10% below target
+        window: 24h
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ml-models-pvc
+  namespace: cost-optimization
+spec:
+  storageClassName: fast-ssd
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cost-optimizer
+  namespace: cost-optimization
+  labels:
+    app: cost-optimizer
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: cost-optimizer
+
+---
+# Custom Resource Definition for Cost Optimization Policies
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: costoptimizationpolicies.cost.trustram.io
+spec:
+  group: cost.trustram.io
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              target:
+                type: object
+                properties:
+                  costReduction:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  timeframe:
+                    type: string
+              strategies:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    enabled:
+                      type: boolean
+                    priority:
+                      type: integer
+                    conditions:
+                      type: array
+                      items:
+                        type: string
+                    actions:
+                      type: array
+                      items:
+                        type: string
+              constraints:
+                type: object
+                properties:
+                  availability:
+                    type: number
+                  performance:
+                    type: number
+                  compliance:
+                    type: array
+                    items:
+                      type: string
+          status:
+            type: object
+            properties:
+              currentCostReduction:
+                type: number
+              optimizationStatus:
+                type: string
+              lastOptimization:
+                type: string
+              recommendations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    action:
+                      type: string
+                    savings:
+                      type: number
+                    confidence:
+                      type: number
+  scope: Namespaced
+  names:
+    plural: costoptimizationpolicies
+    singular: costoptimizationpolicy
+    kind: CostOptimizationPolicy
+    shortNames:
+    - cop
+
+---
+# Default Cost Optimization Policy
+apiVersion: cost.trustram.io/v1
+kind: CostOptimizationPolicy
+metadata:
+  name: default-policy
+  namespace: cost-optimization
+spec:
+  target:
+    costReduction: 0.4  # 40%
+    timeframe: "30d"
+  strategies:
+  - name: "right_sizing"
+    enabled: true
+    priority: 1
+    conditions:
+    - "cpu_utilization < 30"
+    - "memory_utilization < 40"
+    actions:
+    - "downsize_instance"
+    - "enable_burstable"
+  - name: "spot_optimization"
+    enabled: true
+    priority: 2
+    conditions:
+    - "workload_type != 'critical'"
+    - "interruption_tolerance > 0.8"
+    actions:
+    - "migrate_to_spot"
+    - "implement_checkpointing"
+  - name: "multi_cloud_arbitrage"
+    enabled: true
+    priority: 3
+    conditions:
+    - "cost_difference > 0.15"
+    - "migration_cost < savings"
+    actions:
+    - "migrate_workload"
+    - "update_dns_routing"
+  constraints:
+    availability: 0.999  # 99.9%
+    performance: 0.95    # 95% of baseline
+    compliance:
+    - "GDPR"
+    - "SOC2"
+    - "HIPAA"

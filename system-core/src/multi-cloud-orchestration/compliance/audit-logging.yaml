@@ -1,0 +1,435 @@
+# Audit Logging and Compliance Monitoring
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-logger
+  namespace: compliance
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: audit-logger
+  template:
+    metadata:
+      labels:
+        app: audit-logger
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: audit-logger
+      containers:
+      - name: audit-logger
+        image: quay.io/trustram/audit-logger:v4.4.0
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: IMMUTABLE_LOGGING
+          value: "true"
+        - name: ENCRYPTION_ENABLED
+          value: "true"
+        - name: ELASTICSEARCH_URL
+          value: "http://elasticsearch.logging.svc.cluster.local:9200"
+        - name: RETENTION_PERIOD
+          value: "7y"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+        - name: encryption-keys
+          mountPath: /etc/encryption
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: config
+        configMap:
+          name: audit-logging-config
+      - name: encryption-keys
+        secret:
+          secretName: audit-encryption-keys
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: audit-logger
+  namespace: compliance
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: audit-logger
+rules:
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "list", "watch", "create"]
+- apiGroups: ["audit.k8s.io"]
+  resources: ["events"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: audit-logger
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: audit-logger
+subjects:
+- kind: ServiceAccount
+  name: audit-logger
+  namespace: compliance
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audit-logging-config
+  namespace: compliance
+data:
+  config.yaml: |
+    audit_logging:
+      enabled: true
+      immutable: true
+      encryption: true
+      digital_signatures: true
+      retention_period: "7y"
+      
+      event_types:
+        authentication:
+          - "user_login"
+          - "user_logout"
+          - "authentication_failure"
+          - "password_change"
+          - "mfa_activation"
+        
+        authorization:
+          - "permission_granted"
+          - "permission_denied"
+          - "role_assignment"
+          - "privilege_escalation"
+        
+        data_access:
+          - "data_read"
+          - "data_write"
+          - "data_delete"
+          - "data_export"
+          - "data_import"
+        
+        system_events:
+          - "configuration_change"
+          - "system_startup"
+          - "system_shutdown"
+          - "backup_operation"
+          - "restore_operation"
+        
+        compliance_events:
+          - "policy_violation"
+          - "compliance_check"
+          - "audit_trail_access"
+          - "retention_policy_execution"
+        
+        security_events:
+          - "intrusion_attempt"
+          - "malware_detection"
+          - "vulnerability_scan"
+          - "security_incident"
+      
+      log_format:
+        timestamp:
+          format: "RFC3339"
+          timezone: "UTC"
+          precision: "microsecond"
+        
+        required_fields:
+          - "event_id"
+          - "timestamp"
+          - "event_type"
+          - "user_id"
+          - "source_ip"
+          - "resource"
+          - "action"
+          - "result"
+          - "data_classification"
+        
+        optional_fields:
+          - "user_agent"
+          - "session_id"
+          - "transaction_id"
+          - "geolocation"
+          - "device_fingerprint"
+        
+        sensitive_data_handling:
+          mask_pii: true
+          hash_identifiers: true
+          encrypt_payload: true
+      
+      storage:
+        primary:
+          type: "elasticsearch"
+          index_pattern: "audit-logs-%{+YYYY.MM.dd}"
+          retention: "7y"
+          immutable: true
+        
+        backup:
+          type: "s3"
+          bucket: "trustram-audit-logs"
+          encryption: "AES256"
+          compression: "gzip"
+          lifecycle:
+            transition_to_ia: "30d"
+            transition_to_glacier: "90d"
+        
+        archive:
+          type: "glacier_deep_archive"
+          retention: "indefinite"
+          retrieval_time: "12h"
+      
+      integrity:
+        checksums:
+          algorithm: "SHA-256"
+          verification_interval: "24h"
+        
+        digital_signatures:
+          algorithm: "ECDSA-P384"
+          key_rotation: "90d"
+        
+        blockchain_anchoring:
+          enabled: false
+          network: "ethereum"
+          frequency: "daily"
+    
+    compliance_monitoring:
+      frameworks:
+        gdpr:
+          monitors:
+            - name: "data_subject_requests"
+              events: ["data_access_request", "data_deletion_request", "data_portability_request"]
+              sla: "30d"
+              alert_threshold: "72h"
+            
+            - name: "consent_management"
+              events: ["consent_given", "consent_withdrawn", "consent_updated"]
+              retention: "proof_of_consent_required"
+            
+            - name: "cross_border_transfers"
+              events: ["data_export", "data_transfer"]
+              conditions: ["destination_outside_eu"]
+              alert_on_violation: true
+        
+        hipaa:
+          monitors:
+            - name: "phi_access"
+              events: ["phi_read", "phi_write", "phi_delete"]
+              minimum_necessary: true
+              access_logging: "detailed"
+            
+            - name: "breach_detection"
+              events: ["unauthorized_access", "data_loss", "system_compromise"]
+              notification_requirements:
+                hhs: "60d"
+                individuals: "60d_if_500_plus"
+                media: "immediate_if_500_plus"
+        
+        soc2:
+          monitors:
+            - name: "security_controls"
+              events: ["access_control_violation", "network_intrusion", "malware_detection"]
+              control_objectives: ["CC6.1", "CC6.2", "CC6.3"]
+            
+            - name: "availability_monitoring"
+              events: ["service_outage", "performance_degradation"]
+              sla_targets:
+                availability: "99.9%"
+                response_time: "<200ms"
+      
+      alerting:
+        channels:
+          - type: "slack"
+            webhook_url: "${SLACK_WEBHOOK_URL}"
+            severity_threshold: "medium"
+          
+          - type: "email"
+            recipients: ["compliance@trustram.com", "legal@trustram.com"]
+            severity_threshold: "high"
+          
+          - type: "pagerduty"
+            service_key: "${PAGERDUTY_SERVICE_KEY}"
+            severity_threshold: "critical"
+        
+        rules:
+          - name: "compliance_violation"
+            condition: "compliance_violation_detected"
+            severity: "critical"
+            notification_delay: "immediate"
+          
+          - name: "audit_log_tampering"
+            condition: "checksum_mismatch OR signature_invalid"
+            severity: "critical"
+            notification_delay: "immediate"
+          
+          - name: "retention_policy_violation"
+            condition: "data_retention_exceeded"
+            severity: "high"
+            notification_delay: "1h"
+          
+          - name: "unauthorized_access_pattern"
+            condition: "failed_authentication_rate > 10/minute"
+            severity: "medium"
+            notification_delay: "5m"
+    
+    reporting:
+      automated_reports:
+        - name: "daily_compliance_summary"
+          frequency: "daily"
+          recipients: ["compliance-team@trustram.com"]
+          content:
+            - "compliance_violations_count"
+            - "audit_events_summary"
+            - "data_retention_status"
+        
+        - name: "weekly_security_report"
+          frequency: "weekly"
+          recipients: ["security-team@trustram.com", "ciso@trustram.com"]
+          content:
+            - "security_incidents"
+            - "access_violations"
+            - "system_vulnerabilities"
+        
+        - name: "monthly_executive_dashboard"
+          frequency: "monthly"
+          recipients: ["ceo@trustram.com", "cfo@trustram.com", "legal@trustram.com"]
+          content:
+            - "compliance_status_overview"
+            - "risk_assessment"
+            - "audit_findings"
+      
+      custom_queries:
+        - name: "gdpr_data_subject_requests"
+          query: "event_type:data_subject_request AND timestamp:[now-30d TO now]"
+          schedule: "weekly"
+        
+        - name: "hipaa_phi_access_logs"
+          query: "data_classification:phi AND event_type:data_access"
+          schedule: "daily"
+        
+        - name: "failed_authentication_analysis"
+          query: "event_type:authentication_failure AND timestamp:[now-24h TO now]"
+          schedule: "daily"
+
+---
+# Compliance Dashboard Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-dashboard
+  namespace: compliance
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: compliance-dashboard
+  template:
+    metadata:
+      labels:
+        app: compliance-dashboard
+    spec:
+      serviceAccountName: compliance-dashboard
+      containers:
+      - name: compliance-dashboard
+        image: quay.io/trustram/compliance-dashboard:v4.4.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: ELASTICSEARCH_URL
+          value: "http://elasticsearch.logging.svc.cluster.local:9200"
+        - name: PROMETHEUS_URL
+          value: "http://prometheus.monitoring.svc.cluster.local:9090"
+        - name: GRAFANA_URL
+          value: "http://grafana.monitoring.svc.cluster.local:3000"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 200m
+            memory: 512Mi
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: compliance-dashboard
+  namespace: compliance
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: audit-logger
+  namespace: compliance
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compliance-dashboard
+  namespace: compliance
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: compliance-dashboard
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: compliance-dashboard-ingress
+  namespace: compliance
+  annotations:
+    kubernetes.io/ingress.class: istio
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - compliance.trustram.local
+    secretName: compliance-dashboard-tls
+  rules:
+  - host: compliance.trustram.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: compliance-dashboard
+            port:
+              number: 3000

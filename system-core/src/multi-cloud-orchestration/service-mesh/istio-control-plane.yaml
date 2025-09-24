@@ -1,0 +1,196 @@
+# Istio Service Mesh Configuration for Multi-Cloud
+
+# Primary cluster (Management cluster) Istio installation
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: control-plane
+  namespace: istio-system
+spec:
+  values:
+    global:
+      meshID: trustram-mesh
+      multiCluster:
+        clusterName: management-cluster
+      network: management-network
+    pilot:
+      env:
+        EXTERNAL_ISTIOD: true
+        PILOT_ENABLE_CROSS_CLUSTER_WORKLOAD_ENTRY: true
+        PILOT_ENABLE_REMOTE_JWKS_ENDPOINT: true
+  components:
+    pilot:
+      k8s:
+        env:
+        - name: PILOT_ENABLE_CROSS_CLUSTER_WORKLOAD_ENTRY
+          value: "true"
+        - name: PILOT_ENABLE_REMOTE_JWKS_ENDPOINT
+          value: "true"
+        - name: PILOT_SKIP_VALIDATE_CLUSTER_SECRET
+          value: "true"
+    ingressGateways:
+    - name: istio-ingressgateway
+      enabled: true
+      k8s:
+        service:
+          type: LoadBalancer
+          ports:
+          - port: 15021
+            targetPort: 15021
+            name: status-port
+          - port: 80
+            targetPort: 8080
+            name: http2
+          - port: 443
+            targetPort: 8443
+            name: https
+    - name: istio-eastwestgateway
+      label:
+        istio: eastwestgateway
+        app: istio-eastwestgateway
+      enabled: true
+      k8s:
+        service:
+          type: LoadBalancer
+          ports:
+          - port: 15021
+            targetPort: 15021
+            name: status-port
+          - port: 15010
+            targetPort: 15010
+            name: tls
+          - port: 15011
+            targetPort: 15011
+            name: tls-istiod
+          - port: 15012
+            targetPort: 15012
+            name: tls-istiodwebhook
+
+---
+# East-West Gateway for cross-cluster communication
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: cross-network-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: eastwestgateway
+  servers:
+  - port:
+      number: 15021
+      name: tls
+      protocol: TLS
+    tls:
+      mode: ISTIO_MUTUAL
+    hosts:
+    - cross-network.local
+
+---
+# AWS Cluster Remote Configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-remote-secret-aws
+  namespace: istio-system
+  labels:
+    istio/cluster: aws-cluster
+type: Opaque
+data:
+  aws-cluster: "${AWS_CLUSTER_SECRET}"  # Base64 encoded kubeconfig with proper server endpoint
+
+---
+# Azure Cluster Remote Configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-remote-secret-azure
+  namespace: istio-system
+  labels:
+    istio/cluster: azure-cluster
+type: Opaque
+data:
+  azure-cluster: "${AZURE_CLUSTER_SECRET}"  # Base64 encoded kubeconfig with proper server endpoint
+
+---
+# GCP Cluster Remote Configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-remote-secret-gcp
+  namespace: istio-system
+  labels:
+    istio/cluster: gcp-cluster
+type: Opaque
+data:
+  gcp-cluster: "${GCP_CLUSTER_SECRET}"  # Base64 encoded kubeconfig with proper server endpoint
+
+---
+# Multi-cluster Endpoint Discovery
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: aws-cluster-services
+  namespace: istio-system
+spec:
+  hosts:
+  - aws.trustram.local
+  location: MESH_EXTERNAL
+  ports:
+  - number: 443
+    name: tls
+    protocol: TLS
+  resolution: DNS
+  addresses:
+  - 10.128.0.0/12  # AWS cluster service CIDR
+  endpoints:
+  - address: aws-istio-eastwestgateway.istio-system.svc.cluster.local
+    network: aws-network
+    ports:
+      tls: 15443
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: azure-cluster-services
+  namespace: istio-system
+spec:
+  hosts:
+  - azure.trustram.local
+  location: MESH_EXTERNAL
+  ports:
+  - number: 443
+    name: tls
+    protocol: TLS
+  resolution: DNS
+  addresses:
+  - 10.129.0.0/12  # Azure cluster service CIDR
+  endpoints:
+  - address: azure-istio-eastwestgateway.istio-system.svc.cluster.local
+    network: azure-network
+    ports:
+      tls: 15443
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: gcp-cluster-services
+  namespace: istio-system
+spec:
+  hosts:
+  - gcp.trustram.local
+  location: MESH_EXTERNAL
+  ports:
+  - number: 443
+    name: tls
+    protocol: TLS
+  resolution: DNS
+  addresses:
+  - 10.130.0.0/12  # GCP cluster service CIDR
+  endpoints:
+  - address: gcp-istio-eastwestgateway.istio-system.svc.cluster.local
+    network: gcp-network
+    ports:
+      tls: 15443

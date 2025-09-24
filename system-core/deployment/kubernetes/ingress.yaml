@@ -1,0 +1,141 @@
+# TrustStream v4.2 Kubernetes Ingress
+# Author: MiniMax Agent
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: truststream-ingress
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    component: ingress
+    environment: ${ENVIRONMENT}
+  annotations:
+    # Ingress class
+    kubernetes.io/ingress.class: "nginx"
+    
+    # SSL/TLS
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options DENY;
+      add_header X-Content-Type-Options nosniff;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header Referrer-Policy strict-origin-when-cross-origin;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+    
+    # Rate limiting
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/rate-limit-requests: "100"
+    nginx.ingress.kubernetes.io/rate-limit-response-code: "429"
+    
+    # CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "${CORS_ORIGINS}"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    
+    # Request/Response size limits
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/client-max-body-size: "50m"
+    
+    # Timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "5"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    
+    # Health checks
+    nginx.ingress.kubernetes.io/upstream-health-check: "true"
+    nginx.ingress.kubernetes.io/upstream-health-check-path: "/health"
+    nginx.ingress.kubernetes.io/upstream-health-check-interval: "30s"
+    
+    # Load balancing
+    nginx.ingress.kubernetes.io/load-balance: "round_robin"
+    
+    # Monitoring
+    nginx.ingress.kubernetes.io/enable-access-log: "true"
+    nginx.ingress.kubernetes.io/access-log-format: '{
+      "timestamp": "$time_iso8601",
+      "remote_addr": "$remote_addr",
+      "method": "$request_method",
+      "uri": "$uri",
+      "status": "$status",
+      "body_bytes_sent": "$body_bytes_sent",
+      "request_time": "$request_time",
+      "upstream_response_time": "$upstream_response_time",
+      "user_agent": "$http_user_agent",
+      "x_forwarded_for": "$http_x_forwarded_for"
+    }'
+spec:
+  tls:
+  - hosts:
+    - ${DOMAIN_NAME}
+    - www.${DOMAIN_NAME}
+    secretName: truststream-tls-secret
+  rules:
+  - host: ${DOMAIN_NAME}
+    http:
+      paths:
+      - path: /health
+        pathType: Exact
+        backend:
+          service:
+            name: truststream-app-service
+            port:
+              number: 80
+      - path: /metrics
+        pathType: Exact
+        backend:
+          service:
+            name: truststream-metrics-service
+            port:
+              number: 8080
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: truststream-app-service
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: truststream-app-service
+            port:
+              number: 80
+  - host: www.${DOMAIN_NAME}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: truststream-app-service
+            port:
+              number: 80
+---
+# Certificate for TLS
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: truststream-tls-certificate
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    component: certificate
+    environment: ${ENVIRONMENT}
+spec:
+  secretName: truststream-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - ${DOMAIN_NAME}
+  - www.${DOMAIN_NAME}
+  usages:
+  - digital signature
+  - key encipherment

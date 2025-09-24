@@ -1,0 +1,597 @@
+# Cross-Cloud Networking Configuration
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: networking
+  labels:
+    istio-injection: enabled
+
+---
+# VPN Gateway for AWS
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-vpn-gateway
+  namespace: networking
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aws-vpn-gateway
+  template:
+    metadata:
+      labels:
+        app: aws-vpn-gateway
+    spec:
+      serviceAccountName: vpn-gateway
+      containers:
+      - name: strongswan
+        image: quay.io/trustram/strongswan-vpn:v4.4.0
+        ports:
+        - containerPort: 500
+          protocol: UDP
+        - containerPort: 4500
+          protocol: UDP
+        env:
+        - name: VPN_TYPE
+          value: "aws"
+        - name: LOCAL_NETWORK
+          value: "10.128.0.0/12"
+        - name: REMOTE_NETWORKS
+          value: "10.129.0.0/12,10.130.0.0/12"
+        - name: PSK
+          valueFrom:
+            secretKeyRef:
+              name: vpn-credentials
+              key: psk
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        volumeMounts:
+        - name: vpn-config
+          mountPath: /etc/ipsec.d
+      volumes:
+      - name: vpn-config
+        configMap:
+          name: aws-vpn-config
+
+---
+# VPN Gateway for Azure
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-vpn-gateway
+  namespace: networking
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: azure-vpn-gateway
+  template:
+    metadata:
+      labels:
+        app: azure-vpn-gateway
+    spec:
+      serviceAccountName: vpn-gateway
+      containers:
+      - name: strongswan
+        image: quay.io/trustram/strongswan-vpn:v4.4.0
+        ports:
+        - containerPort: 500
+          protocol: UDP
+        - containerPort: 4500
+          protocol: UDP
+        env:
+        - name: VPN_TYPE
+          value: "azure"
+        - name: LOCAL_NETWORK
+          value: "10.129.0.0/12"
+        - name: REMOTE_NETWORKS
+          value: "10.128.0.0/12,10.130.0.0/12"
+        - name: PSK
+          valueFrom:
+            secretKeyRef:
+              name: vpn-credentials
+              key: psk
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        volumeMounts:
+        - name: vpn-config
+          mountPath: /etc/ipsec.d
+      volumes:
+      - name: vpn-config
+        configMap:
+          name: azure-vpn-config
+
+---
+# VPN Gateway for GCP
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcp-vpn-gateway
+  namespace: networking
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gcp-vpn-gateway
+  template:
+    metadata:
+      labels:
+        app: gcp-vpn-gateway
+    spec:
+      serviceAccountName: vpn-gateway
+      containers:
+      - name: strongswan
+        image: quay.io/trustram/strongswan-vpn:v4.4.0
+        ports:
+        - containerPort: 500
+          protocol: UDP
+        - containerPort: 4500
+          protocol: UDP
+        env:
+        - name: VPN_TYPE
+          value: "gcp"
+        - name: LOCAL_NETWORK
+          value: "10.130.0.0/12"
+        - name: REMOTE_NETWORKS
+          value: "10.128.0.0/12,10.129.0.0/12"
+        - name: PSK
+          valueFrom:
+            secretKeyRef:
+              name: vpn-credentials
+              key: psk
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        volumeMounts:
+        - name: vpn-config
+          mountPath: /etc/ipsec.d
+      volumes:
+      - name: vpn-config
+        configMap:
+          name: gcp-vpn-config
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpn-gateway
+  namespace: networking
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vpn-gateway
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "services"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["networkpolicies"]
+  verbs: ["get", "list", "watch", "create", "patch", "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vpn-gateway
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vpn-gateway
+subjects:
+- kind: ServiceAccount
+  name: vpn-gateway
+  namespace: networking
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-vpn-config
+  namespace: networking
+data:
+  ipsec.conf: |
+    config setup
+        charondebug="ike 1, knl 1, cfg 0"
+        uniqueids=no
+    
+    conn aws-to-azure
+        type=tunnel
+        authby=secret
+        left=%defaultroute
+        leftid=${AWS_PUBLIC_IP}
+        leftsubnet=10.128.0.0/12
+        right=${AZURE_VPN_GATEWAY_IP}
+        rightsubnet=10.129.0.0/12
+        ike=aes256-sha2_256-modp2048s256
+        esp=aes256-sha2_256
+        keyingtries=0
+        ikelifetime=1h
+        lifetime=8h
+        dpddelay=30
+        dpdtimeout=120
+        dpdaction=restart
+        auto=start
+    
+    conn aws-to-gcp
+        type=tunnel
+        authby=secret
+        left=%defaultroute
+        leftid=${AWS_PUBLIC_IP}
+        leftsubnet=10.128.0.0/12
+        right=${GCP_VPN_GATEWAY_IP}
+        rightsubnet=10.130.0.0/12
+        ike=aes256-sha2_256-modp2048s256
+        esp=aes256-sha2_256
+        keyingtries=0
+        ikelifetime=1h
+        lifetime=8h
+        dpddelay=30
+        dpdtimeout=120
+        dpdaction=restart
+        auto=start
+  
+  ipsec.secrets: |
+    ${AWS_PUBLIC_IP} ${AZURE_VPN_GATEWAY_IP} : PSK "${PSK}"
+    ${AWS_PUBLIC_IP} ${GCP_VPN_GATEWAY_IP} : PSK "${PSK}"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: azure-vpn-config
+  namespace: networking
+data:
+  ipsec.conf: |
+    config setup
+        charondebug="ike 1, knl 1, cfg 0"
+        uniqueids=no
+    
+    conn azure-to-aws
+        type=tunnel
+        authby=secret
+        left=%defaultroute
+        leftid=${AZURE_PUBLIC_IP}
+        leftsubnet=10.129.0.0/12
+        right=${AWS_VPN_GATEWAY_IP}
+        rightsubnet=10.128.0.0/12
+        ike=aes256-sha2_256-modp2048s256
+        esp=aes256-sha2_256
+        keyingtries=0
+        ikelifetime=1h
+        lifetime=8h
+        dpddelay=30
+        dpdtimeout=120
+        dpdaction=restart
+        auto=start
+    
+    conn azure-to-gcp
+        type=tunnel
+        authby=secret
+        left=%defaultroute
+        leftid=${AZURE_PUBLIC_IP}
+        leftsubnet=10.129.0.0/12
+        right=${GCP_VPN_GATEWAY_IP}
+        rightsubnet=10.130.0.0/12
+        ike=aes256-sha2_256-modp2048s256
+        esp=aes256-sha2_256
+        keyingtries=0
+        ikelifetime=1h
+        lifetime=8h
+        dpddelay=30
+        dpdtimeout=120
+        dpdaction=restart
+        auto=start
+  
+  ipsec.secrets: |
+    ${AZURE_PUBLIC_IP} ${AWS_VPN_GATEWAY_IP} : PSK "${PSK}"
+    ${AZURE_PUBLIC_IP} ${GCP_VPN_GATEWAY_IP} : PSK "${PSK}"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gcp-vpn-config
+  namespace: networking
+data:
+  ipsec.conf: |
+    config setup
+        charondebug="ike 1, knl 1, cfg 0"
+        uniqueids=no
+    
+    conn gcp-to-aws
+        type=tunnel
+        authby=secret
+        left=%defaultroute
+        leftid=${GCP_PUBLIC_IP}
+        leftsubnet=10.130.0.0/12
+        right=${AWS_VPN_GATEWAY_IP}
+        rightsubnet=10.128.0.0/12
+        ike=aes256-sha2_256-modp2048s256
+        esp=aes256-sha2_256
+        keyingtries=0
+        ikelifetime=1h
+        lifetime=8h
+        dpddelay=30
+        dpdtimeout=120
+        dpdaction=restart
+        auto=start
+    
+    conn gcp-to-azure
+        type=tunnel
+        authby=secret
+        left=%defaultroute
+        leftid=${GCP_PUBLIC_IP}
+        leftsubnet=10.130.0.0/12
+        right=${AZURE_VPN_GATEWAY_IP}
+        rightsubnet=10.129.0.0/12
+        ike=aes256-sha2_256-modp2048s256
+        esp=aes256-sha2_256
+        keyingtries=0
+        ikelifetime=1h
+        lifetime=8h
+        dpddelay=30
+        dpdtimeout=120
+        dpdaction=restart
+        auto=start
+  
+  ipsec.secrets: |
+    ${GCP_PUBLIC_IP} ${AWS_VPN_GATEWAY_IP} : PSK "${PSK}"
+    ${GCP_PUBLIC_IP} ${AZURE_VPN_GATEWAY_IP} : PSK "${PSK}"
+
+---
+# Network Policy for Cross-Cloud Communication
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cross-cloud-communication
+  namespace: trustram-system
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: istio-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: compliance
+  - from:
+    - ipBlock:
+        cidr: 10.128.0.0/12  # AWS CIDR
+  - from:
+    - ipBlock:
+        cidr: 10.129.0.0/12  # Azure CIDR
+  - from:
+    - ipBlock:
+        cidr: 10.130.0.0/12  # GCP CIDR
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: istio-system
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: compliance
+  - to:
+    - ipBlock:
+        cidr: 10.128.0.0/12  # AWS CIDR
+  - to:
+    - ipBlock:
+        cidr: 10.129.0.0/12  # Azure CIDR
+  - to:
+    - ipBlock:
+        cidr: 10.130.0.0/12  # GCP CIDR
+  - to: []  # Allow egress to internet for external APIs
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+
+---
+# DNS Configuration for Cross-Cloud Service Discovery
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  trustram.override: |
+    trustram.local:53 {
+        errors
+        health {
+            lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            fallthrough in-addr.arpa ip6.arpa
+            ttl 30
+        }
+        hosts {
+            # AWS Cluster Services
+            10.128.1.10 api-aws.trustram.local
+            10.128.1.11 istio-eastwestgateway-aws.trustram.local
+            
+            # Azure Cluster Services
+            10.129.1.10 api-azure.trustram.local
+            10.129.1.11 istio-eastwestgateway-azure.trustram.local
+            
+            # GCP Cluster Services
+            10.130.1.10 api-gcp.trustram.local
+            10.130.1.11 istio-eastwestgateway-gcp.trustram.local
+            
+            fallthrough
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+            max_concurrent 1000
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+
+---
+# Global Load Balancer for Cross-Cloud Traffic Distribution
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: global-load-balancer
+  namespace: networking
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: global-load-balancer
+  template:
+    metadata:
+      labels:
+        app: global-load-balancer
+    spec:
+      serviceAccountName: global-load-balancer
+      containers:
+      - name: nginx
+        image: nginx:1.24-alpine
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: ssl-certs
+          mountPath: /etc/ssl/certs
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: global-load-balancer-config
+      - name: ssl-certs
+        secret:
+          secretName: tls-certificates
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: global-load-balancer
+  namespace: networking
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-load-balancer-config
+  namespace: networking
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    
+    http {
+        upstream aws_cluster {
+            server api-aws.trustram.local:443 weight=1 max_fails=3 fail_timeout=30s;
+        }
+        
+        upstream azure_cluster {
+            server api-azure.trustram.local:443 weight=1 max_fails=3 fail_timeout=30s;
+        }
+        
+        upstream gcp_cluster {
+            server api-gcp.trustram.local:443 weight=1 max_fails=3 fail_timeout=30s;
+        }
+        
+        # Geo-based routing
+        map $geoip_country_code $backend {
+            default aws_cluster;
+            ~^(DE|FR|IT|ES|NL|BE|AT|SE|NO|DK|FI|IE|PT|GR|LU|MT|CY|EE|LV|LT|SI|SK|CZ|PL|HU|RO|BG|HR)$ azure_cluster;
+            ~^(IN|JP|KR|SG|AU|NZ|TH|MY|ID|PH|VN)$ gcp_cluster;
+        }
+        
+        server {
+            listen 80;
+            listen 443 ssl http2;
+            server_name api.trustram.com;
+            
+            ssl_certificate /etc/ssl/certs/tls.crt;
+            ssl_certificate_key /etc/ssl/certs/tls.key;
+            ssl_protocols TLSv1.3;
+            ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+            
+            # Health check endpoint
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+            
+            # API routing with failover
+            location / {
+                proxy_pass https://$backend;
+                proxy_ssl_verify off;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                # Failover configuration
+                proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+                proxy_next_upstream_tries 3;
+                proxy_next_upstream_timeout 30s;
+                
+                # Timeouts
+                proxy_connect_timeout 5s;
+                proxy_send_timeout 30s;
+                proxy_read_timeout 30s;
+            }
+        }
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: global-load-balancer
+  namespace: networking
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: https
+    port: 443
+    targetPort: 443
+  selector:
+    app: global-load-balancer

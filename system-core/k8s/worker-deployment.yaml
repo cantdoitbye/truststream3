@@ -1,0 +1,121 @@
+# TrustStream v4.2 - Worker Deployment
+# Author: MiniMax Agent
+# Background worker services
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: truststream-worker
+  namespace: truststream-staging
+  labels:
+    app: truststream-worker
+    component: worker
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: truststream-worker
+  template:
+    metadata:
+      labels:
+        app: truststream-worker
+        component: worker
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+      - name: worker
+        image: truststreamstagingacr.azurecr.io/truststream-worker:latest
+        imagePullPolicy: Always
+        ports:
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "staging"
+        - name: WORKER_TYPE
+          value: "general"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: truststream-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: truststream-secrets
+              key: redis-url
+        - name: APPINSIGHTS_INSTRUMENTATIONKEY
+          valueFrom:
+            secretKeyRef:
+              name: truststream-secrets
+              key: app-insights-key
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 9090
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 9090
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+# Worker Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: truststream-worker-service
+  namespace: truststream-staging
+  labels:
+    app: truststream-worker
+    component: worker-service
+spec:
+  type: ClusterIP
+  ports:
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  selector:
+    app: truststream-worker
+  sessionAffinity: None

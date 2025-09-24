@@ -1,0 +1,213 @@
+{
+  "total_tests": 17,
+  "passed_tests": 11,
+  "failed_tests": 6,
+  "overall_success_rate": 64.70588235294117,
+  "core_functionality_success_rate": 88.88888888888889,
+  "advanced_capabilities_success_rate": 85.71428571428571,
+  "execution_time": 33.03849697113037,
+  "status": "FAIL",
+  "production_readiness": false,
+  "daughter_communities_created": 0,
+  "details": [
+    {
+      "test_name": "Test Environment Setup",
+      "success": false,
+      "timestamp": 1758336365.0166733,
+      "details": {
+        "error": "Failed to create parent community",
+        "status_code": 400,
+        "response": "{\"code\":\"22007\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type timestamp with time zone: \\\"2025-09-20T10:46:04.%fZ\\\"\"}"
+      }
+    },
+    {
+      "test_name": "Create Daughter Community - Social Media Marketing",
+      "success": false,
+      "timestamp": 1758336367.4541283,
+      "details": {
+        "status_code": 500,
+        "error": "{\"error\":{\"code\":\"DAUGHTER_COMMUNITY_AGENT_ERROR\",\"message\":\"Parent community not found\",\"timestamp\":\"2025-09-20T02:46:07.443Z\"}}"
+      }
+    },
+    {
+      "test_name": "Create Daughter Community - Email Campaign Management",
+      "success": false,
+      "timestamp": 1758336368.4000652,
+      "details": {
+        "status_code": 500,
+        "error": "{\"error\":{\"code\":\"DAUGHTER_COMMUNITY_AGENT_ERROR\",\"message\":\"Parent community not found\",\"timestamp\":\"2025-09-20T02:46:08.389Z\"}}"
+      }
+    },
+    {
+      "test_name": "Create Daughter Community - SEO Optimization",
+      "success": false,
+      "timestamp": 1758336369.431972,
+      "details": {
+        "status_code": 500,
+        "error": "{\"error\":{\"code\":\"DAUGHTER_COMMUNITY_AGENT_ERROR\",\"message\":\"Parent community not found\",\"timestamp\":\"2025-09-20T02:46:09.423Z\"}}"
+      }
+    },
+    {
+      "test_name": "Create Daughter Community - Content Strategy",
+      "success": false,
+      "timestamp": 1758336370.4579074,
+      "details": {
+        "status_code": 500,
+        "error": "{\"error\":{\"code\":\"DAUGHTER_COMMUNITY_AGENT_ERROR\",\"message\":\"Parent community not found\",\"timestamp\":\"2025-09-20T02:46:10.409Z\"}}"
+      }
+    },
+    {
+      "test_name": "Overall Daughter Community Creation",
+      "success": false,
+      "timestamp": 1758336370.4579513,
+      "details": {
+        "success_rate": "0/4",
+        "percentage": "0.0%",
+        "created_communities": 0
+      }
+    },
+    {
+      "test_name": "Hierarchical Structure Analysis",
+      "success": true,
+      "timestamp": 1758336374.2739315,
+      "details": {
+        "total_daughters": 0,
+        "resource_utilization": 0,
+        "avg_autonomy": 0,
+        "efficiency_score": 1,
+        "recommendations_count": 2,
+        "optimization_opportunities": 3
+      }
+    },
+    {
+      "test_name": "Objective Cascading",
+      "success": true,
+      "timestamp": 1758336377.232693,
+      "details": {
+        "cascade_id": "c9b46211-d36b-406c-bbd6-15d14fb0520f",
+        "total_objectives_cascaded": 0,
+        "success_probability": null,
+        "success_criteria": {
+          "correct_count": true,
+          "specialized_objectives": true,
+          "adapted_metrics": true,
+          "resource_allocation": true,
+          "autonomy_constraints": true
+        },
+        "specialization_mapping": {},
+        "monitoring_interval": "7_days"
+      }
+    },
+    {
+      "test_name": "Resource Coordination",
+      "success": true,
+      "timestamp": 1758336380.2479596,
+      "details": {
+        "coordination_id": "baddfec1-fbbb-40b1-b778-4a6dc7362039",
+        "communities_coordinated": 0,
+        "efficiency_gain": "10-20%",
+        "implementation_steps": 3
+      }
+    },
+    {
+      "test_name": "Organizational Learning Patterns",
+      "success": true,
+      "timestamp": 1758336384.0168812,
+      "details": {
+        "learning_id": "3c1d968e-d968-4820-8737-0e328fe71224",
+        "learning_quality": {
+          "pattern_count": 3,
+          "success_patterns_count": 3,
+          "confidence_score": 0.8,
+          "optimization_opportunities": 3,
+          "next_learning_cycle_scheduled": true
+        },
+        "patterns_learned": [
+          "clear_specialization_boundaries",
+          "balanced_autonomy_levels",
+          "effective_resource_distribution"
+        ]
+      }
+    },
+    {
+      "test_name": "Cross-Community Coordination - resource_conflict_resolution",
+      "success": true,
+      "timestamp": 1758336386.1517758,
+      "details": {
+        "resolution_id": "e7dfd370-d0ab-4787-8f92-6061a1a1779f",
+        "conflicts_analyzed": 0,
+        "preventive_measures": 3
+      }
+    },
+    {
+      "test_name": "Cross-Community Coordination - objective_alignment_check",
+      "success": true,
+      "timestamp": 1758336386.4216323,
+      "details": {
+        "resolution_id": "0b50a9a6-29be-430d-9e2f-e1137f1d8b07",
+        "conflicts_analyzed": 0,
+        "preventive_measures": 3
+      }
+    },
+    {
+      "test_name": "Cross-Community Coordination - performance_aggregation",
+      "success": true,
+      "timestamp": 1758336386.5466518,
+      "details": {
+        "resolution_id": "8c0a5ab8-512d-46d1-ac0a-0df9ece31346",
+        "conflicts_analyzed": 0,
+        "preventive_measures": 3
+      }
+    },
+    {
+      "test_name": "Overall Cross-Community Coordination",
+      "success": true,
+      "timestamp": 1758336386.5466907,
+      "details": {
+        "success_rate": "3/3",
+        "percentage": "100.0%"
+      }
+    },
+    {
+      "test_name": "Structure Optimization",
+      "success": true,
+      "timestamp": 1758336388.6720467,
+      "details": {
+        "optimization_id": "6e1c4b46-5753-48a0-b6f5-002ecc671cc5",
+        "current_efficiency": 0.75,
+        "suggestions_count": 3,
+        "expected_improvement": "15-25%"
+      }
+    },
+    {
+      "test_name": "Performance Monitoring",
+      "success": true,
+      "timestamp": 1758336392.353199,
+      "details": {
+        "structures_tracked": 0,
+        "coordination_logs": 0,
+        "avg_autonomy_level": 0,
+        "total_resource_allocation": 0,
+        "calculated_efficiency": 0
+      }
+    },
+    {
+      "test_name": "Test Environment Cleanup",
+      "success": true,
+      "timestamp": 1758336395.184242,
+      "details": {
+        "cleaned_daughters": 0,
+        "cleaned_parent": true
+      }
+    }
+  ],
+  "success_criteria_met": {
+    "Autonomous Sub-Community Creation": false,
+    "Hierarchical Structure Management": true,
+    "Objective Cascading": true,
+    "Resource Coordination": true,
+    "Organizational Learning": true,
+    "Cross-Community Communication": true,
+    "Performance Monitoring": true
+  }
+}

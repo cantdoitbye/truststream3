@@ -1,0 +1,79 @@
+# TrustStream v4.2 Kubernetes Services
+# Author: MiniMax Agent
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: truststream-app-service
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    component: app
+    environment: ${ENVIRONMENT}
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/health"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 80
+    protocol: TCP
+    name: https
+  selector:
+    app: truststream
+    component: app
+    environment: ${ENVIRONMENT}
+  sessionAffinity: None
+---
+# Internal Service for metrics and monitoring
+apiVersion: v1
+kind: Service
+metadata:
+  name: truststream-metrics-service
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    component: metrics
+    environment: ${ENVIRONMENT}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/metrics"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: metrics
+  selector:
+    app: truststream
+    component: app
+    environment: ${ENVIRONMENT}
+---
+# Headless Service for StatefulSet (if needed)
+apiVersion: v1
+kind: Service
+metadata:
+  name: truststream-headless-service
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    component: headless
+    environment: ${ENVIRONMENT}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: app
+  selector:
+    app: truststream
+    component: app
+    environment: ${ENVIRONMENT}

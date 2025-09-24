@@ -1,0 +1,509 @@
+imports:
+- path: compute.py
+- path: network.py
+- path: storage.py
+- path: database.py
+- path: monitoring.py
+
+resources:
+# Project Configuration
+- name: project-config
+  type: compute.py
+  properties:
+    projectName: truststream-v44
+    environment: production
+    zone: us-central1-a
+    region: us-central1
+
+# Network Infrastructure
+- name: vpc-network
+  type: network.py
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-vpc
+    autoCreateSubnetworks: false
+    routingMode: REGIONAL
+
+- name: subnet-us-central1
+  type: compute.v1.subnetwork
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-subnet-central
+    region: $(ref.project-config.region)
+    network: $(ref.vpc-network.selfLink)
+    ipCidrRange: 10.0.0.0/24
+    enableFlowLogs: true
+    privateIpGoogleAccess: true
+    secondaryIpRanges:
+    - rangeName: pods
+      ipCidrRange: 10.1.0.0/16
+    - rangeName: services
+      ipCidrRange: 10.2.0.0/16
+
+# Firewall Rules
+- name: firewall-allow-internal
+  type: compute.v1.firewall
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-allow-internal
+    network: $(ref.vpc-network.selfLink)
+    direction: INGRESS
+    sourceRanges:
+    - 10.0.0.0/8
+    allowed:
+    - IPProtocol: TCP
+      ports: ["0-65535"]
+    - IPProtocol: UDP
+      ports: ["0-65535"]
+    - IPProtocol: ICMP
+
+- name: firewall-allow-ssh
+  type: compute.v1.firewall
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-allow-ssh
+    network: $(ref.vpc-network.selfLink)
+    direction: INGRESS
+    sourceRanges:
+    - 0.0.0.0/0
+    allowed:
+    - IPProtocol: TCP
+      ports: ["22"]
+    targetTags:
+    - ssh-enabled
+
+- name: firewall-allow-http-https
+  type: compute.v1.firewall
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-allow-web
+    network: $(ref.vpc-network.selfLink)
+    direction: INGRESS
+    sourceRanges:
+    - 0.0.0.0/0
+    allowed:
+    - IPProtocol: TCP
+      ports: ["80", "443"]
+    targetTags:
+    - web-server
+
+# GKE Cluster
+- name: gke-cluster
+  type: container.v1.cluster
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-cluster
+    zone: $(ref.project-config.zone)
+    network: $(ref.vpc-network.selfLink)
+    subnetwork: $(ref.subnet-us-central1.selfLink)
+    initialClusterVersion: "1.28.3-gke.1067000"
+    loggingService: logging.googleapis.com/kubernetes
+    monitoringService: monitoring.googleapis.com/kubernetes
+    
+    # IP allocation policy for VPC-native cluster
+    ipAllocationPolicy:
+      useIpAliases: true
+      clusterSecondaryRangeName: pods
+      servicesSecondaryRangeName: services
+    
+    # Network policy
+    networkPolicy:
+      enabled: true
+      provider: CALICO
+    
+    # Master authorized networks
+    masterAuthorizedNetworksConfig:
+      enabled: false
+    
+    # Private cluster config
+    privateClusterConfig:
+      enablePrivateNodes: true
+      enablePrivateEndpoint: false
+      masterIpv4CidrBlock: 172.16.0.0/28
+    
+    # Addons
+    addonsConfig:
+      networkPolicyConfig:
+        disabled: false
+      httpLoadBalancing:
+        disabled: false
+      horizontalPodAutoscaling:
+        disabled: false
+      kubernetesDashboard:
+        disabled: true
+      cloudRunConfig:
+        disabled: false
+    
+    # Workload Identity
+    workloadIdentityConfig:
+      workloadPool: $(ref.project-config.projectName).svc.id.goog
+    
+    # Resource usage export
+    resourceUsageExportConfig:
+      enableNetworkEgressMetering: true
+      enableResourceConsumptionMetering: true
+      consumptionMeteringConfig:
+        enabled: true
+    
+    # Database encryption
+    databaseEncryption:
+      state: ENCRYPTED
+      keyName: projects/$(ref.project-config.projectName)/locations/$(ref.project-config.region)/keyRings/truststream-keyring/cryptoKeys/gke-encryption-key
+    
+    # Shielded nodes
+    shieldedNodes:
+      enabled: true
+
+# GKE Node Pool
+- name: gke-nodepool-primary
+  type: container.v1.nodePool
+  properties:
+    name: primary-pool
+    cluster: $(ref.gke-cluster.selfLink)
+    initialNodeCount: 3
+    
+    nodeConfig:
+      machineType: e2-standard-4
+      diskSizeGb: 100
+      diskType: pd-ssd
+      imageType: COS_CONTAINERD
+      
+      # Scopes
+      oauthScopes:
+      - https://www.googleapis.com/auth/cloud-platform
+      
+      # Service account
+      serviceAccount: $(ref.gke-service-account.email)
+      
+      # Security
+      shieldedInstanceConfig:
+        enableSecureBoot: true
+        enableIntegrityMonitoring: true
+      
+      # Workload metadata
+      workloadMetadataConfig:
+        mode: GKE_METADATA
+      
+      # Taints and labels
+      labels:
+        environment: $(ref.project-config.environment)
+        project: $(ref.project-config.projectName)
+      
+      tags:
+      - gke-node
+      - $(ref.project-config.projectName)-$(ref.project-config.environment)
+    
+    # Autoscaling
+    autoscaling:
+      enabled: true
+      minNodeCount: 1
+      maxNodeCount: 10
+    
+    # Management
+    management:
+      autoUpgrade: true
+      autoRepair: true
+    
+    # Upgrade settings
+    upgradeSettings:
+      maxSurge: 1
+      maxUnavailable: 0
+
+# Service Account for GKE nodes
+- name: gke-service-account
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: $(ref.project-config.projectName)-$(ref.project-config.environment)-gke-sa
+    displayName: GKE Service Account for TrustStram
+
+# Cloud SQL Instance
+- name: cloudsql-instance
+  type: sqladmin.v1beta4.instance
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-db
+    region: $(ref.project-config.region)
+    databaseVersion: POSTGRES_14
+    
+    settings:
+      tier: db-custom-4-16384
+      diskSize: 100
+      diskType: PD_SSD
+      diskAutoresize: true
+      diskAutoresizeLimit: 1000
+      
+      # Backup configuration
+      backupConfiguration:
+        enabled: true
+        startTime: "03:00"
+        location: $(ref.project-config.region)
+        pointInTimeRecoveryEnabled: true
+        transactionLogRetentionDays: 7
+        backupRetentionSettings:
+          retentionUnit: COUNT
+          retainedBackups: 7
+      
+      # High availability
+      availabilityType: REGIONAL
+      
+      # IP configuration
+      ipConfiguration:
+        ipv4Enabled: false
+        privateNetwork: $(ref.vpc-network.selfLink)
+        requireSsl: true
+      
+      # Maintenance window
+      maintenanceWindow:
+        hour: 4
+        day: 7
+        updateTrack: stable
+      
+      # Database flags
+      databaseFlags:
+      - name: log_statement
+        value: "all"
+      - name: log_min_duration_statement
+        value: "1000"
+      - name: shared_preload_libraries
+        value: "pg_stat_statements"
+      
+      # Insights config
+      insightsConfig:
+        queryInsightsEnabled: true
+        queryStringLength: 1024
+        recordApplicationTags: true
+        recordClientAddress: true
+    
+    # Deletion protection
+    deletionProtection: true
+
+# Cloud SQL Database
+- name: cloudsql-database
+  type: sqladmin.v1beta4.database
+  properties:
+    name: truststream
+    instance: $(ref.cloudsql-instance.name)
+    charset: UTF8
+    collation: en_US.UTF8
+
+# Cloud SQL User
+- name: cloudsql-user
+  type: sqladmin.v1beta4.user
+  properties:
+    name: truststream_admin
+    instance: $(ref.cloudsql-instance.name)
+    password: # This should be set via secret manager
+
+# Cloud Storage Bucket
+- name: storage-bucket
+  type: storage.v1.bucket
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-storage
+    location: $(ref.project-config.region)
+    storageClass: STANDARD
+    
+    # Versioning
+    versioning:
+      enabled: true
+    
+    # Lifecycle
+    lifecycle:
+      rule:
+      - action:
+          type: Delete
+        condition:
+          age: 365
+      - action:
+          type: SetStorageClass
+          storageClass: NEARLINE
+        condition:
+          age: 30
+    
+    # Encryption
+    encryption:
+      defaultKmsKeyName: projects/$(ref.project-config.projectName)/locations/$(ref.project-config.region)/keyRings/truststream-keyring/cryptoKeys/storage-encryption-key
+    
+    # CORS
+    cors:
+    - origin: ["*"]
+      method: ["GET", "POST", "PUT", "DELETE"]
+      responseHeader: ["Content-Type"]
+      maxAgeSeconds: 3600
+    
+    # Uniform bucket-level access
+    iamConfiguration:
+      uniformBucketLevelAccess:
+        enabled: true
+
+# Container Registry (GCR) - using Artifact Registry
+- name: artifact-registry
+  type: artifactregistry.v1.repository
+  properties:
+    repositoryId: $(ref.project-config.projectName)-$(ref.project-config.environment)
+    location: $(ref.project-config.region)
+    format: DOCKER
+    description: "Container registry for TrustStram v4.4"
+
+# Cloud KMS Key Ring
+- name: kms-keyring
+  type: cloudkms.v1.keyRing
+  properties:
+    keyRingId: truststream-keyring
+    location: $(ref.project-config.region)
+
+# Cloud KMS Keys
+- name: gke-encryption-key
+  type: cloudkms.v1.cryptoKey
+  properties:
+    cryptoKeyId: gke-encryption-key
+    keyRing: $(ref.kms-keyring.name)
+    purpose: ENCRYPT_DECRYPT
+    
+- name: storage-encryption-key
+  type: cloudkms.v1.cryptoKey
+  properties:
+    cryptoKeyId: storage-encryption-key
+    keyRing: $(ref.kms-keyring.name)
+    purpose: ENCRYPT_DECRYPT
+
+# Redis Instance (Memorystore)
+- name: redis-instance
+  type: redis.v1.instance
+  properties:
+    instanceId: $(ref.project-config.projectName)-$(ref.project-config.environment)-redis
+    region: $(ref.project-config.region)
+    tier: STANDARD_HA
+    memorySizeGb: 5
+    redisVersion: REDIS_6_X
+    
+    # Network
+    authorizedNetwork: $(ref.vpc-network.selfLink)
+    connectMode: PRIVATE_SERVICE_ACCESS
+    
+    # Security
+    authEnabled: true
+    transitEncryptionMode: SERVER_AUTHENTICATION
+    
+    # Maintenance
+    maintenancePolicy:
+      weeklyMaintenanceWindow:
+      - day: SUNDAY
+        startTime:
+          hours: 4
+          minutes: 0
+
+# Load Balancer
+- name: load-balancer
+  type: compute.v1.globalForwardingRule
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-lb
+    target: $(ref.target-https-proxy.selfLink)
+    portRange: "443"
+    IPProtocol: TCP
+    loadBalancingScheme: EXTERNAL
+
+# Target HTTPS Proxy
+- name: target-https-proxy
+  type: compute.v1.targetHttpsProxy
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-https-proxy
+    urlMap: $(ref.url-map.selfLink)
+    sslCertificates:
+    - $(ref.ssl-certificate.selfLink)
+
+# URL Map
+- name: url-map
+  type: compute.v1.urlMap
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-url-map
+    defaultService: $(ref.backend-service.selfLink)
+
+# SSL Certificate
+- name: ssl-certificate
+  type: compute.v1.sslCertificate
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-ssl-cert
+    managed:
+      domains:
+      - truststream.example.com  # Replace with actual domain
+
+# Backend Service
+- name: backend-service
+  type: compute.v1.backendService
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-backend
+    protocol: HTTP
+    portName: http
+    timeoutSec: 30
+    
+    # Health check
+    healthChecks:
+    - $(ref.health-check.selfLink)
+    
+    # Load balancing
+    loadBalancingScheme: EXTERNAL
+    
+    # Security policy
+    securityPolicy: $(ref.security-policy.selfLink)
+
+# Health Check
+- name: health-check
+  type: compute.v1.healthCheck
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-health-check
+    type: HTTP
+    httpHealthCheck:
+      port: 8080
+      requestPath: /health
+    checkIntervalSec: 10
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 3
+
+# Cloud Armor Security Policy
+- name: security-policy
+  type: compute.v1.securityPolicy
+  properties:
+    name: $(ref.project-config.projectName)-$(ref.project-config.environment)-security-policy
+    description: "Security policy for TrustStram v4.4"
+    
+    rules:
+    - priority: 1000
+      action: allow
+      match:
+        versionedExpr: SRC_IPS_V1
+        config:
+          srcIpRanges:
+          - "*"
+      description: "Default allow rule"
+    
+    - priority: 900
+      action: deny(403)
+      match:
+        expr:
+          expression: "origin.region_code == 'CN'"
+      description: "Block traffic from China"
+    
+    adaptiveProtectionConfig:
+      layer7DdosDefenseConfig:
+        enable: true
+        ruleVisibility: STANDARD
+
+# IAM Policy Bindings
+- name: gke-sa-binding
+  type: gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding
+  properties:
+    resource: $(ref.project-config.projectName)
+    role: roles/storage.objectViewer
+    member: serviceAccount:$(ref.gke-service-account.email)
+
+outputs:
+- name: clusterName
+  value: $(ref.gke-cluster.name)
+- name: clusterEndpoint
+  value: $(ref.gke-cluster.endpoint)
+- name: databaseConnectionName
+  value: $(ref.cloudsql-instance.connectionName)
+- name: storageUrl
+  value: gs://$(ref.storage-bucket.name)
+- name: artifactRegistryUrl
+  value: $(ref.project-config.region)-docker.pkg.dev/$(ref.project-config.projectName)/$(ref.artifact-registry.name)
+- name: loadBalancerIP
+  value: $(ref.load-balancer.IPAddress)
+- name: redisHost
+  value: $(ref.redis-instance.host)
+- name: redisPort
+  value: $(ref.redis-instance.port)

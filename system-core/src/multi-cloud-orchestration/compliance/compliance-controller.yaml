@@ -1,0 +1,538 @@
+# Data Residency and Compliance Controller
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: compliance
+  labels:
+    istio-injection: enabled
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-controller
+  namespace: compliance
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: compliance-controller
+  template:
+    metadata:
+      labels:
+        app: compliance-controller
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: compliance-controller
+      containers:
+      - name: compliance-controller
+        image: quay.io/trustram/compliance-controller:v4.4.0
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: COMPLIANCE_FRAMEWORKS
+          value: "GDPR,CCPA,HIPAA,SOC2,ISO27001"
+        - name: DATA_CLASSIFICATION_ENABLED
+          value: "true"
+        - name: AUDIT_LOGGING_ENABLED
+          value: "true"
+        - name: ENCRYPTION_REQUIRED
+          value: "true"
+        - name: PROMETHEUS_URL
+          value: "http://prometheus.monitoring.svc.cluster.local:9090"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+        - name: policies
+          mountPath: /etc/policies
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: config
+        configMap:
+          name: compliance-config
+      - name: policies
+        configMap:
+          name: compliance-policies
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: compliance-controller
+  namespace: compliance
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: compliance-controller
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "secrets", "nodes", "namespaces"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets", "daemonsets"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+- apiGroups: ["security.istio.io"]
+  resources: ["authorizationpolicies", "peerauthentications"]
+  verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+- apiGroups: ["compliance.trustram.io"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["policy"]
+  resources: ["podsecuritypolicies"]
+  verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: compliance-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: compliance-controller
+subjects:
+- kind: ServiceAccount
+  name: compliance-controller
+  namespace: compliance
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: compliance-config
+  namespace: compliance
+data:
+  config.yaml: |
+    compliance:
+      frameworks:
+        gdpr:
+          enabled: true
+          data_residency:
+            allowed_regions:
+              - "eu-west-1"
+              - "eu-central-1"
+              - "eu-north-1"
+            prohibited_regions:
+              - "us-*"
+              - "ap-*"
+              - "ca-*"
+          data_retention:
+            max_period: "7y"  # 7 years
+            default_period: "2y"
+            deletion_required: true
+          consent_management:
+            required: true
+            explicit_consent: true
+            withdrawal_mechanism: true
+          data_portability:
+            export_format: "json"
+            delivery_method: "secure_download"
+            response_time: "30d"
+          breach_notification:
+            authority_notification: "72h"
+            data_subject_notification: "without_undue_delay"
+        
+        ccpa:
+          enabled: true
+          data_residency:
+            california_data_in_state: true
+            cross_border_restrictions: false
+          consumer_rights:
+            right_to_know: true
+            right_to_delete: true
+            right_to_opt_out: true
+            right_to_non_discrimination: true
+          data_categories:
+            - "personal_identifiers"
+            - "commercial_information"
+            - "biometric_information"
+            - "internet_activity"
+            - "geolocation_data"
+          sale_of_data:
+            tracking_enabled: true
+            opt_out_mechanism: true
+        
+        hipaa:
+          enabled: true
+          data_residency:
+            us_only: true
+            business_associate_agreements: true
+          safeguards:
+            administrative:
+              - "workforce_training"
+              - "access_management"
+              - "contingency_plan"
+            physical:
+              - "facility_access_controls"
+              - "workstation_security"
+              - "device_controls"
+            technical:
+              - "access_control"
+              - "audit_controls"
+              - "integrity"
+              - "transmission_security"
+          encryption:
+            data_at_rest: "AES256"
+            data_in_transit: "TLS1.3"
+            key_management: "FIPS140-2"
+        
+        soc2:
+          enabled: true
+          trust_criteria:
+            security:
+              - "access_controls"
+              - "logical_access"
+              - "network_security"
+            availability:
+              - "system_monitoring"
+              - "incident_response"
+              - "change_management"
+            processing_integrity:
+              - "data_validation"
+              - "error_handling"
+              - "system_processing"
+            confidentiality:
+              - "data_classification"
+              - "encryption"
+              - "secure_disposal"
+            privacy:
+              - "notice_collection"
+              - "choice_consent"
+              - "disclosure_third_parties"
+        
+        iso27001:
+          enabled: true
+          controls:
+            - "A.8.2.1"  # Classification of information
+            - "A.8.2.2"  # Labelling of information
+            - "A.8.2.3"  # Handling of assets
+            - "A.10.1.1" # Cryptographic controls
+            - "A.12.1.1" # Operational procedures
+            - "A.12.6.1" # Management of technical vulnerabilities
+            - "A.13.1.1" # Network controls
+            - "A.13.2.1" # Information transfer policies
+            - "A.14.1.2" # Securing application services
+            - "A.16.1.1" # Responsibilities and procedures
+    
+    data_classification:
+      levels:
+        - name: "public"
+          label: "data.classification/public"
+          description: "Information that can be freely shared"
+          restrictions: []
+          retention: "indefinite"
+        
+        - name: "internal"
+          label: "data.classification/internal"
+          description: "Information for internal use only"
+          restrictions:
+            - "no_external_sharing"
+            - "employee_access_only"
+          retention: "7y"
+        
+        - name: "confidential"
+          label: "data.classification/confidential"
+          description: "Sensitive business information"
+          restrictions:
+            - "need_to_know_basis"
+            - "encryption_required"
+            - "audit_logging_required"
+          retention: "3y"
+        
+        - name: "restricted"
+          label: "data.classification/restricted"
+          description: "Highly sensitive information"
+          restrictions:
+            - "authorized_personnel_only"
+            - "end_to_end_encryption"
+            - "multi_factor_authentication"
+            - "detailed_audit_logging"
+          retention: "1y"
+        
+        - name: "pii"
+          label: "data.classification/pii"
+          description: "Personally Identifiable Information"
+          restrictions:
+            - "gdpr_compliance_required"
+            - "ccpa_compliance_required"
+            - "consent_required"
+            - "right_to_deletion"
+            - "data_minimization"
+          retention: "2y_or_consent_withdrawal"
+        
+        - name: "phi"
+          label: "data.classification/phi"
+          description: "Protected Health Information"
+          restrictions:
+            - "hipaa_compliance_required"
+            - "us_data_residency_only"
+            - "strong_encryption"
+            - "access_logging"
+          retention: "6y_medical_7y_minor"
+    
+    data_residency:
+      enforcement_mode: "strict"
+      default_policy: "deny"
+      
+      regions:
+        eu_regions:
+          - "eu-west-1"
+          - "eu-central-1"
+          - "eu-north-1"
+          - "eu-west-2"
+          - "eu-west-3"
+          - "eu-south-1"
+        
+        us_regions:
+          - "us-east-1"
+          - "us-east-2"
+          - "us-west-1"
+          - "us-west-2"
+        
+        apac_regions:
+          - "ap-northeast-1"
+          - "ap-northeast-2"
+          - "ap-southeast-1"
+          - "ap-southeast-2"
+          - "ap-south-1"
+      
+      policies:
+        - name: "eu_personal_data"
+          data_types: ["pii", "personal_data"]
+          allowed_regions: "eu_regions"
+          prohibited_regions: ["us_regions", "apac_regions"]
+          cross_border_transfer:
+            allowed: false
+            adequacy_decision_required: true
+            standard_contractual_clauses: false
+        
+        - name: "us_healthcare_data"
+          data_types: ["phi", "healthcare_data"]
+          allowed_regions: "us_regions"
+          prohibited_regions: ["eu_regions", "apac_regions"]
+          cross_border_transfer:
+            allowed: false
+        
+        - name: "general_business_data"
+          data_types: ["internal", "confidential"]
+          allowed_regions: ["eu_regions", "us_regions"]
+          prohibited_regions: []
+          cross_border_transfer:
+            allowed: true
+            encryption_required: true
+    
+    encryption:
+      algorithms:
+        symmetric:
+          - "AES-256-GCM"
+          - "ChaCha20-Poly1305"
+        asymmetric:
+          - "RSA-4096"
+          - "ECDSA-P384"
+          - "Ed25519"
+        hashing:
+          - "SHA-384"
+          - "SHA-512"
+          - "BLAKE2b"
+      
+      key_management:
+        rotation_frequency: "90d"
+        hsm_required: true
+        key_escrow: false
+        multi_party_control: true
+      
+      transport:
+        min_tls_version: "1.3"
+        cipher_suites:
+          - "TLS_AES_256_GCM_SHA384"
+          - "TLS_CHACHA20_POLY1305_SHA256"
+        certificate_transparency: true
+    
+    audit_logging:
+      enabled: true
+      retention: "7y"
+      immutable: true
+      
+      events:
+        - "data_access"
+        - "data_modification"
+        - "data_deletion"
+        - "user_authentication"
+        - "privilege_escalation"
+        - "configuration_changes"
+        - "policy_violations"
+        - "compliance_violations"
+      
+      log_format:
+        timestamp: "RFC3339"
+        user_id: "required"
+        source_ip: "required"
+        user_agent: "optional"
+        resource_accessed: "required"
+        operation: "required"
+        result: "required"
+        data_classification: "required"
+    
+    monitoring:
+      compliance_dashboard: true
+      violation_alerts: true
+      
+      metrics:
+        - name: "compliance_violations"
+          type: "counter"
+          labels: ["framework", "violation_type", "severity"]
+        
+        - name: "data_residency_violations"
+          type: "counter"
+          labels: ["region", "data_type"]
+        
+        - name: "encryption_compliance"
+          type: "gauge"
+          labels: ["algorithm", "component"]
+        
+        - name: "audit_log_integrity"
+          type: "gauge"
+          labels: ["log_type"]
+      
+      alerts:
+        - name: "gdpr_violation"
+          condition: "compliance_violations{framework='gdpr'} > 0"
+          severity: "critical"
+        
+        - name: "data_residency_violation"
+          condition: "data_residency_violations > 0"
+          severity: "critical"
+        
+        - name: "encryption_failure"
+          condition: "encryption_compliance < 1"
+          severity: "high"
+        
+        - name: "audit_log_tampering"
+          condition: "audit_log_integrity < 1"
+          severity: "critical"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: compliance-policies
+  namespace: compliance
+data:
+  gdpr_policy.rego: |
+    package gdpr
+    
+    # GDPR Article 6 - Lawfulness of processing
+    lawful_basis_required[msg] {
+        data_processing_operation
+        not lawful_basis_present
+        msg := "Data processing requires lawful basis under GDPR Article 6"
+    }
+    
+    # GDPR Article 17 - Right to erasure
+    deletion_request_compliance[msg] {
+        deletion_request
+        not data_deleted_within_timeframe
+        msg := "Data deletion request must be processed within 30 days"
+    }
+    
+    # GDPR Article 32 - Security of processing
+    encryption_required[msg] {
+        personal_data_processing
+        not encryption_enabled
+        msg := "Personal data processing requires encryption"
+    }
+    
+    # GDPR Article 44-49 - Transfers to third countries
+    cross_border_transfer_prohibited[msg] {
+        eu_personal_data
+        transfer_to_non_adequate_country
+        not adequacy_decision
+        not standard_contractual_clauses
+        msg := "Cross-border transfer of EU personal data requires adequacy decision or SCCs"
+    }
+  
+  ccpa_policy.rego: |
+    package ccpa
+    
+    # CCPA Section 1798.100 - Consumer's Right to Know
+    data_collection_notice_required[msg] {
+        california_consumer_data
+        data_collection_at_point_of_collection
+        not privacy_notice_provided
+        msg := "Privacy notice required at point of collection for California consumers"
+    }
+    
+    # CCPA Section 1798.105 - Consumer's Right to Delete
+    deletion_right_compliance[msg] {
+        california_consumer_deletion_request
+        not data_deleted_within_45_days
+        msg := "Consumer deletion request must be processed within 45 days"
+    }
+    
+    # CCPA Section 1798.120 - Consumer's Right to Opt-Out
+    opt_out_mechanism_required[msg] {
+        personal_information_sale
+        not opt_out_mechanism_available
+        msg := "Opt-out mechanism required for sale of personal information"
+    }
+  
+  hipaa_policy.rego: |
+    package hipaa
+    
+    # HIPAA Security Rule - Administrative Safeguards
+    security_officer_required[msg] {
+        phi_processing
+        not security_officer_assigned
+        msg := "Security officer must be assigned for PHI processing"
+    }
+    
+    # HIPAA Security Rule - Physical Safeguards
+    workstation_security_required[msg] {
+        phi_access_workstation
+        not workstation_security_controls
+        msg := "Workstations accessing PHI must have security controls"
+    }
+    
+    # HIPAA Security Rule - Technical Safeguards
+    access_control_required[msg] {
+        phi_system_access
+        not unique_user_identification
+        msg := "Unique user identification required for PHI system access"
+    }
+    
+    # HIPAA Breach Notification Rule
+    breach_notification_required[msg] {
+        phi_breach_discovered
+        affected_individuals > 500
+        not hhs_notification_within_60_days
+        msg := "HHS notification required within 60 days for breaches affecting 500+ individuals"
+    }

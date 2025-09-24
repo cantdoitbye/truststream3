@@ -1,0 +1,304 @@
+# Azure Infrastructure Provider Configuration for Cluster API
+# This configures the Azure infrastructure provider for CAPI
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureClusterTemplate
+metadata:
+  name: azure-cluster-template
+  namespace: default
+spec:
+  template:
+    spec:
+      # Azure Location
+      location: "West US 2"
+      
+      # Resource Group Configuration
+      resourceGroup: "trustram-v44-rg"
+      
+      # Virtual Network Configuration
+      networkSpec:
+        vnet:
+          name: "trustram-vnet"
+          cidrBlocks:
+          - "10.1.0.0/16"
+          tags:
+            Name: "trustram-v4.4-vnet"
+            Environment: "production"
+            Project: "multi-cloud-orchestration"
+        
+        # Subnet Configuration
+        subnets:
+        - name: "trustram-control-plane-subnet"
+          cidrBlocks:
+          - "10.1.0.0/24"
+          role: "control-plane"
+        - name: "trustram-node-subnet"
+          cidrBlocks:
+          - "10.1.1.0/24"
+          role: "node"
+        - name: "trustram-internal-lb-subnet"
+          cidrBlocks:
+          - "10.1.2.0/24"
+          role: "internal-lb"
+      
+      # Load Balancer Configuration
+      apiServerLB:
+        name: "trustram-api-lb"
+        sku: "Standard"
+        type: "Public"
+        frontendIPs:
+        - name: "trustram-api-frontend"
+          publicIP:
+            name: "trustram-api-ip"
+            dnsName: "trustram-azure-api"
+      
+      # Network Security Groups
+      networkSecurityGroups:
+        controlplane:
+          name: "trustram-controlplane-nsg"
+          securityRules:
+          - name: "allow-apiserver"
+            protocol: "Tcp"
+            direction: "Inbound"
+            priority: 100
+            sourceAddressPrefix: "*"
+            sourcePortRange: "*"
+            destinationAddressPrefix: "*"
+            destinationPortRange: "6443"
+            access: "Allow"
+          - name: "allow-ssh"
+            protocol: "Tcp"
+            direction: "Inbound"
+            priority: 200
+            sourceAddressPrefix: "*"
+            sourcePortRange: "*"
+            destinationAddressPrefix: "*"
+            destinationPortRange: "22"
+            access: "Allow"
+        node:
+          name: "trustram-node-nsg"
+          securityRules:
+          - name: "allow-kubelet"
+            protocol: "Tcp"
+            direction: "Inbound"
+            priority: 100
+            sourceAddressPrefix: "10.1.0.0/16"
+            sourcePortRange: "*"
+            destinationAddressPrefix: "*"
+            destinationPortRange: "10250"
+            access: "Allow"
+          - name: "allow-nodeport"
+            protocol: "Tcp"
+            direction: "Inbound"
+            priority: 200
+            sourceAddressPrefix: "*"
+            sourcePortRange: "*"
+            destinationAddressPrefix: "*"
+            destinationPortRange: "30000-32767"
+            access: "Allow"
+      
+      # Azure Identity Configuration
+      identityRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureClusterIdentity
+        name: trustram-cluster-identity
+      
+      # Additional Tags
+      additionalTags:
+        "sigs.k8s.io/cluster-api-provider-azure/cluster/trustram-azure": "owned"
+        "kubernetes.io/cluster/trustram-azure": "owned"
+        "trustram.io/environment": "production"
+        "trustram.io/version": "v4.4"
+
+---
+# Azure Machine Template for Control Plane
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureMachineTemplate
+metadata:
+  name: azure-control-plane-machine-template
+  namespace: default
+spec:
+  template:
+    spec:
+      # VM Configuration
+      vmSize: "Standard_D4s_v3"
+      
+      # Operating System Configuration
+      osDisk:
+        osType: "Linux"
+        diskSizeGB: 128
+        managedDisk:
+          storageAccountType: "Premium_LRS"
+        cachingType: "ReadWrite"
+      
+      # VM Image
+      image:
+        marketplace:
+          publisher: "Canonical"
+          offer: "0001-com-ubuntu-server-jammy"
+          sku: "22_04-lts-gen2"
+          version: "latest"
+      
+      # SSH Configuration
+      sshPublicKey: ""
+      
+      # Network Interface Configuration
+      networkInterfaces:
+      - subnetName: "trustram-control-plane-subnet"
+        acceleratedNetworking: true
+      
+      # Enable Managed Identity
+      identity: "SystemAssigned"
+      
+      # Security Configuration
+      securityProfile:
+        encryptionAtHost: true
+      
+      # User Data for Kubernetes Bootstrap
+      userData: |
+        #!/bin/bash
+        set -e
+        
+        # Update system
+        apt-get update
+        apt-get upgrade -y
+        
+        # Install Azure CLI
+        curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+        
+        # Install Docker
+        apt-get install -y docker.io
+        systemctl enable docker
+        systemctl start docker
+        
+        # Install kubeadm, kubelet, kubectl
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+        apt-get update
+        apt-get install -y kubelet=1.28.2-00 kubeadm=1.28.2-00 kubectl=1.28.2-00
+        apt-mark hold kubelet kubeadm kubectl
+        
+        # Configure containerd
+        apt-get install -y containerd.io
+        mkdir -p /etc/containerd
+        containerd config default > /etc/containerd/config.toml
+        systemctl restart containerd
+        systemctl enable containerd
+        
+        # Enable kubelet
+        systemctl enable kubelet
+
+---
+# Azure Machine Template for Worker Nodes
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureMachineTemplate
+metadata:
+  name: azure-worker-machine-template
+  namespace: default
+spec:
+  template:
+    spec:
+      # VM Configuration - Using Spot Instances for Cost Optimization
+      vmSize: "Standard_D2s_v3"
+      spotVMOptions:
+        maxPrice: -1  # Use current Spot price
+        evictionPolicy: "Delete"
+      
+      # Operating System Configuration
+      osDisk:
+        osType: "Linux"
+        diskSizeGB: 100
+        managedDisk:
+          storageAccountType: "Standard_LRS"
+        cachingType: "ReadWrite"
+      
+      # VM Image
+      image:
+        marketplace:
+          publisher: "Canonical"
+          offer: "0001-com-ubuntu-server-jammy"
+          sku: "22_04-lts-gen2"
+          version: "latest"
+      
+      # SSH Configuration
+      sshPublicKey: ""
+      
+      # Network Interface Configuration
+      networkInterfaces:
+      - subnetName: "trustram-node-subnet"
+        acceleratedNetworking: true
+      
+      # Enable Managed Identity
+      identity: "SystemAssigned"
+      
+      # Security Configuration
+      securityProfile:
+        encryptionAtHost: true
+      
+      # Data Disks for Additional Storage
+      dataDisks:
+      - nameSuffix: "etcd"
+        diskSizeGB: 50
+        managedDisk:
+          storageAccountType: "Premium_LRS"
+        lun: 0
+        cachingType: "ReadWrite"
+      
+      # User Data for Kubernetes Bootstrap
+      userData: |
+        #!/bin/bash
+        set -e
+        
+        # Update system
+        apt-get update
+        apt-get upgrade -y
+        
+        # Install Azure CLI
+        curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+        
+        # Install Docker
+        apt-get install -y docker.io
+        systemctl enable docker
+        systemctl start docker
+        
+        # Install kubeadm, kubelet, kubectl
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+        apt-get update
+        apt-get install -y kubelet=1.28.2-00 kubeadm=1.28.2-00 kubectl=1.28.2-00
+        apt-mark hold kubelet kubeadm kubectl
+        
+        # Configure containerd
+        apt-get install -y containerd.io
+        mkdir -p /etc/containerd
+        containerd config default > /etc/containerd/config.toml
+        systemctl restart containerd
+        systemctl enable containerd
+        
+        # Enable kubelet
+        systemctl enable kubelet
+        
+        # Mount data disk for etcd
+        mkdir -p /var/lib/etcd
+        mkfs.ext4 /dev/disk/azure/scsi1/lun0
+        mount /dev/disk/azure/scsi1/lun0 /var/lib/etcd
+        echo '/dev/disk/azure/scsi1/lun0 /var/lib/etcd ext4 defaults 0 0' >> /etc/fstab
+
+---
+# Azure Cluster Identity
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureClusterIdentity
+metadata:
+  name: trustram-cluster-identity
+  namespace: default
+spec:
+  type: ServicePrincipal
+  tenantID: "YOUR_TENANT_ID"  # Replace with actual tenant ID
+  clientID: "YOUR_CLIENT_ID"  # Replace with actual client ID
+  clientSecret:
+    name: azure-cluster-identity-secret
+    namespace: default
+  allowedNamespaces:
+    list:
+    - default
+    - kube-system
+    - trustram-system

@@ -1,0 +1,102 @@
+# TrustStream v4.2 Kubernetes Namespace Configuration
+# Author: MiniMax Agent
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    version: v4.2
+    environment: ${ENVIRONMENT}
+    managed-by: truststream-deployment-pipeline
+  annotations:
+    description: "TrustStream v4.2 ${ENVIRONMENT} environment"
+    contact: "${DEPLOYMENT_EMAIL}"
+    created-by: "truststream-deployment-pipeline"
+    created-at: "${DEPLOYMENT_TIMESTAMP}"
+---
+# Resource Quotas for the namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: truststream-${ENVIRONMENT}-quota
+  namespace: truststream-${ENVIRONMENT}
+spec:
+  hard:
+    requests.cpu: "${RESOURCE_QUOTA_CPU_REQUESTS}"
+    requests.memory: "${RESOURCE_QUOTA_MEMORY_REQUESTS}"
+    limits.cpu: "${RESOURCE_QUOTA_CPU_LIMITS}"
+    limits.memory: "${RESOURCE_QUOTA_MEMORY_LIMITS}"
+    pods: "${RESOURCE_QUOTA_PODS}"
+    persistentvolumeclaims: "${RESOURCE_QUOTA_PVC}"
+    services: "10"
+    secrets: "20"
+    configmaps: "20"
+---
+# Network Policy for the namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: truststream-${ENVIRONMENT}-network-policy
+  namespace: truststream-${ENVIRONMENT}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: truststream-system
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: TCP
+      port: 3000
+    - protocol: TCP
+      port: 8080
+  egress:
+  - {} # Allow all egress traffic
+---
+# Service Account for TrustStream pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: truststream-service-account
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    environment: ${ENVIRONMENT}
+automountServiceAccountToken: true
+---
+# Role for TrustStream service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: truststream-role
+  namespace: truststream-${ENVIRONMENT}
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+# Role Binding for TrustStream service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: truststream-role-binding
+  namespace: truststream-${ENVIRONMENT}
+subjects:
+- kind: ServiceAccount
+  name: truststream-service-account
+  namespace: truststream-${ENVIRONMENT}
+roleRef:
+  kind: Role
+  name: truststream-role
+  apiGroup: rbac.authorization.k8s.io

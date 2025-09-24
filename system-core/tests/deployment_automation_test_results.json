@@ -1,0 +1,535 @@
+{
+  "test_summary": {
+    "start_time": "2025-09-21T08:30:31.528222",
+    "test_focus": "Deployment Strategy, CI/CD, and Infrastructure Automation",
+    "total_execution_time": 0.1021871566772461,
+    "end_time": "2025-09-21T08:30:31.630408",
+    "overall_results": {
+      "total_tests": 0,
+      "passed_tests": 0,
+      "failed_tests": 0,
+      "success_rate": 0,
+      "overall_health": "needs_attention"
+    }
+  },
+  "test_phases": {
+    "kubernetes_analysis": {
+      "manifests_analyzed": 7,
+      "configuration_analysis": [
+        {
+          "file": "configmaps-secrets.yaml",
+          "size_bytes": 2477,
+          "document_count": 3,
+          "resource_types": [
+            "ConfigMap",
+            "ConfigMap",
+            "Secret"
+          ],
+          "deployment_strategy_indicators": {},
+          "security_features": {},
+          "resource_limits": {},
+          "has_blue_green_config": false
+        },
+        {
+          "file": "deployment-blue.yaml",
+          "size_bytes": 3906,
+          "document_count": 1,
+          "resource_types": [
+            "Deployment"
+          ],
+          "deployment_strategy_indicators": {
+            "truststream-blue": "blue-green"
+          },
+          "security_features": {
+            "securityContext": true
+          },
+          "resource_limits": {
+            "defined": true
+          },
+          "has_blue_green_config": true
+        },
+        {
+          "file": "deployment-green.yaml",
+          "size_bytes": 3913,
+          "document_count": 1,
+          "resource_types": [
+            "Deployment"
+          ],
+          "deployment_strategy_indicators": {
+            "truststream-green": "blue-green"
+          },
+          "security_features": {
+            "securityContext": true
+          },
+          "resource_limits": {
+            "defined": true
+          },
+          "has_blue_green_config": true
+        },
+        {
+          "file": "hpa.yaml",
+          "size_bytes": 2952,
+          "document_count": 3,
+          "resource_types": [
+            "HorizontalPodAutoscaler",
+            "HorizontalPodAutoscaler",
+            "HorizontalPodAutoscaler"
+          ],
+          "deployment_strategy_indicators": {
+            "autoscaling": true
+          },
+          "security_features": {},
+          "resource_limits": {},
+          "has_blue_green_config": false
+        },
+        {
+          "file": "network-policies.yaml",
+          "size_bytes": 1954,
+          "document_count": 4,
+          "resource_types": [
+            "NetworkPolicy",
+            "NetworkPolicy",
+            "NetworkPolicy",
+            "NetworkPolicy"
+          ],
+          "deployment_strategy_indicators": {},
+          "security_features": {},
+          "resource_limits": {},
+          "has_blue_green_config": false
+        },
+        {
+          "file": "services.yaml",
+          "size_bytes": 1247,
+          "document_count": 2,
+          "resource_types": [
+            "Service",
+            "Service"
+          ],
+          "deployment_strategy_indicators": {},
+          "security_features": {},
+          "resource_limits": {},
+          "has_blue_green_config": false
+        },
+        {
+          "file": "worker-deployment.yaml",
+          "size_bytes": 2892,
+          "document_count": 2,
+          "resource_types": [
+            "Deployment",
+            "Service"
+          ],
+          "deployment_strategy_indicators": {},
+          "security_features": {
+            "securityContext": true
+          },
+          "resource_limits": {
+            "defined": true
+          },
+          "has_blue_green_config": false
+        }
+      ],
+      "deployment_strategy": {
+        "blue_green_ready": true,
+        "autoscaling_configured": true,
+        "network_policies_present": false
+      },
+      "security_analysis": {},
+      "validation_issues": []
+    },
+    "docker_testing": {
+      "dockerfiles_analyzed": 4,
+      "dockerfile_analysis": [
+        {
+          "file": "Dockerfile",
+          "size_bytes": 3243,
+          "line_count": 117,
+          "multi_stage_build": true,
+          "base_images": [
+            "node:18-alpine",
+            "node:18-alpine",
+            "node:18-alpine"
+          ],
+          "security_features": {
+            "non_root_user": true,
+            "no_sudo": true,
+            "minimal_packages": true,
+            "package_cleanup": true
+          },
+          "optimization_features": {
+            "layer_caching": true,
+            "multi_stage": true,
+            "build_args": false,
+            "health_check": true
+          },
+          "build_practices": {
+            "workdir_set": true,
+            "expose_ports": true,
+            "entrypoint_defined": true,
+            "labels_used": true
+          }
+        },
+        {
+          "file": "Dockerfile.app",
+          "size_bytes": 1871,
+          "line_count": 79,
+          "multi_stage_build": true,
+          "base_images": [
+            "node:18-alpine",
+            "node:18-alpine"
+          ],
+          "security_features": {
+            "non_root_user": true,
+            "no_sudo": true,
+            "minimal_packages": true,
+            "package_cleanup": true
+          },
+          "optimization_features": {
+            "layer_caching": true,
+            "multi_stage": true,
+            "build_args": false,
+            "health_check": true
+          },
+          "build_practices": {
+            "workdir_set": true,
+            "expose_ports": true,
+            "entrypoint_defined": true,
+            "labels_used": true
+          }
+        },
+        {
+          "file": "Dockerfile.nginx",
+          "size_bytes": 1796,
+          "line_count": 61,
+          "multi_stage_build": false,
+          "base_images": [
+            "nginx:1.24-alpine"
+          ],
+          "security_features": {
+            "non_root_user": true,
+            "no_sudo": true,
+            "minimal_packages": true,
+            "package_cleanup": true
+          },
+          "optimization_features": {
+            "layer_caching": true,
+            "multi_stage": false,
+            "build_args": false,
+            "health_check": true
+          },
+          "build_practices": {
+            "workdir_set": false,
+            "expose_ports": true,
+            "entrypoint_defined": true,
+            "labels_used": true
+          }
+        },
+        {
+          "file": "Dockerfile.worker",
+          "size_bytes": 1962,
+          "line_count": 80,
+          "multi_stage_build": true,
+          "base_images": [
+            "node:18-alpine",
+            "node:18-alpine"
+          ],
+          "security_features": {
+            "non_root_user": true,
+            "no_sudo": true,
+            "minimal_packages": true,
+            "package_cleanup": true
+          },
+          "optimization_features": {
+            "layer_caching": true,
+            "multi_stage": true,
+            "build_args": false,
+            "health_check": true
+          },
+          "build_practices": {
+            "workdir_set": true,
+            "expose_ports": true,
+            "entrypoint_defined": true,
+            "labels_used": true
+          }
+        }
+      ],
+      "build_optimization": {
+        "multi_stage_usage": 0.75,
+        "security_score": 1.0,
+        "optimization_score": 0.6875
+      },
+      "security_analysis": {},
+      "docker_issues": []
+    },
+    "cicd_analysis": {
+      "pipelines_analyzed": 1,
+      "pipeline_analysis": [
+        {
+          "type": "Azure DevOps",
+          "file": "azure-pipelines.yml",
+          "size_bytes": 10569,
+          "stages": [
+            "Build",
+            "Security",
+            "BuildImages",
+            "DeployStaging",
+            "DeployProduction",
+            "PostDeployment"
+          ],
+          "triggers": {
+            "push": true
+          },
+          "testing_stages": true,
+          "deployment_stages": true,
+          "security_scanning": true
+        }
+      ],
+      "automation_coverage": {
+        "testing_automated": true,
+        "deployment_automated": true,
+        "security_scanning_automated": true,
+        "overall_coverage_score": 1.0
+      },
+      "pipeline_issues": []
+    },
+    "blue_green_testing": {
+      "blue_green_readiness": true,
+      "deployment_configs": [
+        {
+          "file": "deployment-blue.yaml",
+          "environment": "blue",
+          "valid_yaml": true,
+          "has_deployment": true,
+          "replica_count": 3,
+          "labels": {
+            "app": "truststream",
+            "slot": "blue",
+            "version": "1.0.0"
+          },
+          "strategy": {
+            "type": "RollingUpdate",
+            "has_strategy_config": true
+          }
+        },
+        {
+          "file": "deployment-green.yaml",
+          "environment": "green",
+          "valid_yaml": true,
+          "has_deployment": true,
+          "replica_count": 3,
+          "labels": {
+            "app": "truststream",
+            "slot": "green",
+            "version": "1.0.0"
+          },
+          "strategy": {
+            "type": "RollingUpdate",
+            "has_strategy_config": true
+          }
+        }
+      ],
+      "service_configs": [
+        {
+          "name": "truststream-service",
+          "type": "LoadBalancer",
+          "selector": {
+            "app": "truststream",
+            "slot": "blue"
+          },
+          "ports": 2
+        },
+        {
+          "name": "truststream-internal",
+          "type": "ClusterIP",
+          "selector": {
+            "app": "truststream"
+          },
+          "ports": 2
+        }
+      ],
+      "traffic_management": {
+        "service_selectors_configured": true,
+        "label_based_routing": true,
+        "ingress_configured": false
+      },
+      "rollback_capability": {
+        "multiple_environments": true,
+        "deployment_strategy_configured": true,
+        "rollback_scripts_present": true
+      },
+      "configuration_issues": []
+    },
+    "automation_testing": {
+      "scripts_analyzed": 6,
+      "script_analysis": [
+        {
+          "script": "deploy.sh",
+          "category": "deployment",
+          "size_bytes": 13919,
+          "line_count": 469,
+          "executable": true,
+          "has_error_handling": true,
+          "has_logging": true,
+          "has_validation": true,
+          "uses_environment_vars": true,
+          "has_help_text": true,
+          "quality_score": 100.0
+        },
+        {
+          "script": "validate-deployment.sh",
+          "category": "validation",
+          "size_bytes": 26277,
+          "line_count": 748,
+          "executable": true,
+          "has_error_handling": true,
+          "has_logging": true,
+          "has_validation": true,
+          "uses_environment_vars": true,
+          "has_help_text": true,
+          "quality_score": 100.0
+        },
+        {
+          "script": "verify-deployment.sh",
+          "category": "validation",
+          "size_bytes": 13707,
+          "line_count": 502,
+          "executable": true,
+          "has_error_handling": true,
+          "has_logging": true,
+          "has_validation": true,
+          "uses_environment_vars": true,
+          "has_help_text": true,
+          "quality_score": 100.0
+        },
+        {
+          "script": "rollback-deployment.sh",
+          "category": "rollback",
+          "size_bytes": 20619,
+          "line_count": 675,
+          "executable": true,
+          "has_error_handling": true,
+          "has_logging": true,
+          "has_validation": true,
+          "uses_environment_vars": true,
+          "has_help_text": true,
+          "quality_score": 100.0
+        },
+        {
+          "script": "setup-environment.sh",
+          "category": "setup",
+          "size_bytes": 14518,
+          "line_count": 437,
+          "executable": true,
+          "has_error_handling": true,
+          "has_logging": true,
+          "has_validation": true,
+          "uses_environment_vars": true,
+          "has_help_text": true,
+          "quality_score": 100.0
+        },
+        {
+          "script": "health-check.sh",
+          "category": "health_check",
+          "size_bytes": 9810,
+          "line_count": 329,
+          "executable": true,
+          "has_error_handling": true,
+          "has_logging": true,
+          "has_validation": true,
+          "uses_environment_vars": true,
+          "has_help_text": true,
+          "quality_score": 100.0
+        }
+      ],
+      "automation_coverage": {
+        "categories_covered": 5,
+        "total_categories": 5,
+        "coverage_percentage": 100.0,
+        "average_quality_score": 100.0
+      },
+      "script_issues": []
+    },
+    "infrastructure_validation": {
+      "infrastructure_analysis": [
+        {
+          "type": "Azure Resource Manager",
+          "file": "azure-infrastructure.json",
+          "valid_json": true,
+          "resource_count": 14,
+          "resource_types": [
+            "Microsoft.DBforPostgreSQL/servers",
+            "Microsoft.Network/virtualNetworks",
+            "Microsoft.Web/sites/config",
+            "Microsoft.Storage/storageAccounts",
+            "Microsoft.OperationalInsights/workspaces",
+            "Microsoft.ContainerService/managedClusters",
+            "Microsoft.KeyVault/vaults",
+            "Microsoft.ContainerRegistry/registries",
+            "Microsoft.Network/networkSecurityGroups",
+            "Microsoft.Web/serverfarms",
+            "Microsoft.Web/sites",
+            "Microsoft.DBforPostgreSQL/servers/databases",
+            "Microsoft.DBforPostgreSQL/servers/firewallRules",
+            "Microsoft.Insights/components"
+          ],
+          "security_features": {
+            "encryption_configured": true,
+            "access_control": true,
+            "network_security": true,
+            "monitoring_enabled": true
+          },
+          "best_practices": {
+            "tags_used": false,
+            "parameters_defined": true,
+            "outputs_defined": true,
+            "variables_used": true
+          }
+        }
+      ],
+      "validation_results": {
+        "azure-infrastructure.json": {
+          "security_score": 100.0,
+          "best_practices_score": 75.0,
+          "overall_score": 87.5
+        }
+      },
+      "security_assessment": {},
+      "compliance_check": {}
+    },
+    "monitoring_testing": {
+      "monitoring_configs": [
+        {
+          "file": "pipeline-config.yaml",
+          "has_health_checks": true,
+          "has_metrics": true,
+          "has_logging": false,
+          "has_alerting": true,
+          "observability_features": [
+            "health_checks",
+            "metrics",
+            "alerting"
+          ]
+        },
+        {
+          "file": "configmaps-secrets.yaml",
+          "has_health_checks": true,
+          "has_metrics": true,
+          "has_logging": true,
+          "has_alerting": false,
+          "observability_features": [
+            "health_checks",
+            "metrics",
+            "logging"
+          ]
+        }
+      ],
+      "alerting_setup": {
+        "health_monitoring": true,
+        "metrics_collection": true,
+        "log_aggregation": true,
+        "alert_notifications": true
+      },
+      "observability_score": 75.0,
+      "monitoring_issues": []
+    }
+  }
+}

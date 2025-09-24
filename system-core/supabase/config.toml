@@ -1,0 +1,31 @@
+[functions.ai-performance-monitoring]
+enabled = true
+verify_jwt = true
+import_map = "./functions/ai-performance-monitoring/deno.json"
+entrypoint = "./functions/ai-performance-monitoring/index.ts"
+
+# Security-Enhanced Functions with Custom Authentication Middleware
+[functions.ai-leader-quality-agent]
+enabled = true
+verify_jwt = false  # Let our enhanced middleware handle authentication
+entrypoint = "./functions/ai-leader-quality-agent/index.ts"
+
+[functions.ai-leader-transparency-agent]
+enabled = true
+verify_jwt = false  # Let our enhanced middleware handle authentication
+entrypoint = "./functions/ai-leader-transparency-agent/index.ts"
+
+[functions.ai-leader-accountability-agent]
+enabled = true
+verify_jwt = false  # Let our enhanced middleware handle authentication
+entrypoint = "./functions/ai-leader-accountability-agent/index.ts"
+
+[functions.ai-leader-efficiency-agent]
+enabled = true
+verify_jwt = false  # Let our enhanced middleware handle authentication
+entrypoint = "./functions/ai-leader-efficiency-agent/index.ts"
+
+[functions.ai-leader-innovation-agent]
+enabled = true
+verify_jwt = false  # Let our enhanced middleware handle authentication
+entrypoint = "./functions/ai-leader-innovation-agent/index.ts"

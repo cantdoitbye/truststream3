@@ -1,0 +1,378 @@
+# Smart Load Balancing and Resource Allocation
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-load-balancer
+  namespace: cost-optimization
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: smart-load-balancer
+  template:
+    metadata:
+      labels:
+        app: smart-load-balancer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: smart-load-balancer
+      containers:
+      - name: smart-load-balancer
+        image: quay.io/trustram/smart-load-balancer:v4.4.0
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: ISTIO_PILOT_URL
+          value: "http://istiod.istio-system.svc.cluster.local:15010"
+        - name: PROMETHEUS_URL
+          value: "http://prometheus.monitoring.svc.cluster.local:9090"
+        - name: OPTIMIZATION_INTERVAL
+          value: "60"  # 1 minute
+        - name: LOAD_BALANCING_ALGORITHM
+          value: "ai_weighted_least_connections"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+        - name: models
+          mountPath: /opt/models
+      volumes:
+      - name: config
+        configMap:
+          name: smart-load-balancer-config
+      - name: models
+        persistentVolumeClaim:
+          claimName: ml-models-pvc
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: smart-load-balancer
+  namespace: cost-optimization
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: smart-load-balancer
+rules:
+- apiGroups: ["networking.istio.io"]
+  resources: ["virtualservices", "destinationrules", "gateways"]
+  verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+- apiGroups: [""]
+  resources: ["services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: smart-load-balancer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: smart-load-balancer
+subjects:
+- kind: ServiceAccount
+  name: smart-load-balancer
+  namespace: cost-optimization
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smart-load-balancer-config
+  namespace: cost-optimization
+data:
+  config.yaml: |
+    load_balancing:
+      algorithms:
+        - name: "ai_weighted_least_connections"
+          enabled: true
+          description: "AI-driven weighted least connections with cost optimization"
+          weights:
+            - metric: "response_time"
+              weight: 0.3
+            - metric: "cpu_utilization"
+              weight: 0.2
+            - metric: "memory_utilization"
+              weight: 0.2
+            - metric: "cost_per_request"
+              weight: 0.2
+            - metric: "availability"
+              weight: 0.1
+        
+        - name: "geographic_proximity"
+          enabled: true
+          description: "Route to closest healthy endpoint"
+          max_latency_ms: 100
+          fallback_algorithm: "ai_weighted_least_connections"
+        
+        - name: "cost_aware_routing"
+          enabled: true
+          description: "Route to most cost-effective endpoint"
+          cost_threshold: 0.15  # 15% cost difference threshold
+          latency_penalty: 50   # max 50ms additional latency for cost savings
+    
+    traffic_splitting:
+      strategies:
+        - name: "canary_deployment"
+          enabled: true
+          max_canary_percentage: 20
+          success_criteria:
+            error_rate_threshold: 0.01
+            latency_increase_threshold: 0.1
+            duration: "10m"
+        
+        - name: "blue_green_deployment"
+          enabled: true
+          switch_criteria:
+            health_check_passes: 5
+            performance_threshold: 0.95
+        
+        - name: "cost_optimization_split"
+          enabled: true
+          description: "Route percentage of traffic to cheaper resources"
+          cheap_resource_percentage: 70
+          quality_threshold: 0.9
+    
+    resource_allocation:
+      cpu_allocation:
+        algorithm: "demand_prediction"
+        overcommit_ratio: 1.5
+        reservation_percentage: 10
+        burst_capacity: 2.0
+      
+      memory_allocation:
+        algorithm: "working_set_prediction"
+        overcommit_ratio: 1.2
+        swap_enabled: false
+        compression_enabled: true
+      
+      network_allocation:
+        bandwidth_management: "traffic_shaping"
+        priority_classes:
+          - name: "critical"
+            guaranteed_bandwidth: "100Mbps"
+            priority: 1
+          - name: "important"
+            guaranteed_bandwidth: "50Mbps"
+            priority: 2
+          - name: "best_effort"
+            guaranteed_bandwidth: "10Mbps"
+            priority: 3
+    
+    optimization_policies:
+      - name: "peak_hour_scaling"
+        enabled: true
+        conditions:
+          - time_range: "09:00-17:00"
+          - weekday: true
+        actions:
+          - increase_replica_count: 1.5
+          - enable_premium_instances
+          - reduce_cost_optimization_threshold
+      
+      - name: "off_peak_optimization"
+        enabled: true
+        conditions:
+          - time_range: "22:00-06:00"
+          - cpu_utilization < 30
+        actions:
+          - consolidate_workloads
+          - enable_spot_instances
+          - increase_cost_optimization_threshold
+      
+      - name: "regional_failover"
+        enabled: true
+        conditions:
+          - regional_latency > 200
+          - error_rate > 0.05
+        actions:
+          - redirect_traffic_to_backup_region
+          - scale_up_backup_region
+          - alert_operations_team
+    
+    cost_models:
+      aws:
+        compute:
+          on_demand_multiplier: 1.0
+          reserved_multiplier: 0.6
+          spot_multiplier: 0.3
+        network:
+          ingress_cost_per_gb: 0.0
+          egress_cost_per_gb: 0.09
+          cross_az_cost_per_gb: 0.01
+        storage:
+          gp3_cost_per_gb_month: 0.08
+          io1_cost_per_gb_month: 0.125
+      
+      azure:
+        compute:
+          on_demand_multiplier: 1.0
+          reserved_multiplier: 0.65
+          spot_multiplier: 0.2
+        network:
+          ingress_cost_per_gb: 0.0
+          egress_cost_per_gb: 0.087
+        storage:
+          premium_ssd_cost_per_gb_month: 0.15
+          standard_ssd_cost_per_gb_month: 0.05
+      
+      gcp:
+        compute:
+          on_demand_multiplier: 1.0
+          committed_use_multiplier: 0.57
+          preemptible_multiplier: 0.2
+        network:
+          ingress_cost_per_gb: 0.0
+          egress_cost_per_gb: 0.12
+        storage:
+          ssd_persistent_cost_per_gb_month: 0.17
+          standard_persistent_cost_per_gb_month: 0.04
+    
+    monitoring:
+      metrics:
+        - name: "request_latency"
+          collection_interval: "10s"
+          aggregation: "p99"
+        - name: "error_rate"
+          collection_interval: "30s"
+          aggregation: "rate"
+        - name: "cost_per_request"
+          collection_interval: "60s"
+          aggregation: "average"
+        - name: "resource_utilization"
+          collection_interval: "30s"
+          aggregation: "average"
+      
+      alerts:
+        - name: "high_cost_per_request"
+          threshold: 0.01  # $0.01 per request
+          duration: "5m"
+        - name: "inefficient_routing"
+          threshold: 0.2   # 20% routing inefficiency
+          duration: "2m"
+        - name: "load_balancer_failure"
+          condition: "service_unavailable"
+          duration: "30s"
+
+---
+# Dynamic Traffic Routing Virtual Service
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: cost-optimized-routing
+  namespace: trustram-system
+spec:
+  hosts:
+  - trustram-api.trustram-system.svc.cluster.local
+  http:
+  - match:
+    - headers:
+        priority:
+          exact: "high"
+    route:
+    - destination:
+        host: trustram-api.trustram-system.svc.cluster.local
+        subset: premium
+      weight: 100
+  - match:
+    - headers:
+        cost-optimization:
+          exact: "enabled"
+    route:
+    - destination:
+        host: trustram-api.trustram-system.svc.cluster.local
+        subset: cost-optimized
+      weight: 70
+    - destination:
+        host: trustram-api.trustram-system.svc.cluster.local
+        subset: standard
+      weight: 30
+  - route:
+    - destination:
+        host: trustram-api.trustram-system.svc.cluster.local
+        subset: standard
+      weight: 80
+    - destination:
+        host: trustram-api.trustram-system.svc.cluster.local
+        subset: cost-optimized
+      weight: 20
+  fault:
+    delay:
+      percentage:
+        value: 0.1
+      fixedDelay: 5s
+
+---
+# Destination Rule for Cost-Optimized Subsets
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: cost-optimized-destination
+  namespace: trustram-system
+spec:
+  host: trustram-api.trustram-system.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 50
+        maxRequestsPerConnection: 5
+    outlierDetection:
+      consecutive5xxErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+  subsets:
+  - name: premium
+    labels:
+      instance-type: premium
+    trafficPolicy:
+      connectionPool:
+        tcp:
+          maxConnections: 200
+        http:
+          http1MaxPendingRequests: 100
+  - name: standard
+    labels:
+      instance-type: standard
+    trafficPolicy:
+      connectionPool:
+        tcp:
+          maxConnections: 100
+        http:
+          http1MaxPendingRequests: 50
+  - name: cost-optimized
+    labels:
+      instance-type: spot
+    trafficPolicy:
+      connectionPool:
+        tcp:
+          maxConnections: 50
+        http:
+          http1MaxPendingRequests: 25
+      outlierDetection:
+        consecutive5xxErrors: 2
+        interval: 15s
+        baseEjectionTime: 10s

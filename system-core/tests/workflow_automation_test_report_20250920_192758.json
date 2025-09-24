@@ -1,0 +1,139 @@
+{
+  "test_suite": "workflow_automation_comprehensive",
+  "execution_time": 0.006218433380126953,
+  "total_tests": 8,
+  "passed_tests": 0,
+  "failed_tests": 8,
+  "success_rate": 0.0,
+  "timestamp": "2025-09-20T19:27:58.865737",
+  "test_results": [
+    {
+      "test_name": "performance_metrics",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('127.0.0.1', 54321), [Errno 111] Connect call failed ('::1', 54321, 0, 0)]"
+        }
+      },
+      "expected_fields": [
+        "metrics",
+        "trend_analysis"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "policy_automation_enforcement",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('::1', 54321, 0, 0), [Errno 111] Connect call failed ('127.0.0.1', 54321)]"
+        }
+      },
+      "expected_fields": [
+        "policy_interpretation",
+        "automation_action",
+        "enforcement_status"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "workflow_creation",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('127.0.0.1', 54321), [Errno 111] Connect call failed ('::1', 54321, 0, 0)]"
+        }
+      },
+      "expected_fields": [
+        "workflow_id",
+        "workflow_name",
+        "automation_enabled"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "content_auto_moderation",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('::1', 54321, 0, 0), [Errno 111] Connect call failed ('127.0.0.1', 54321)]"
+        }
+      },
+      "expected_fields": [
+        "moderation_decision",
+        "automation_applied"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "policy_rule_creation",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('127.0.0.1', 54321), [Errno 111] Connect call failed ('::1', 54321, 0, 0)]"
+        }
+      },
+      "expected_fields": [
+        "rule_id",
+        "rule_name",
+        "automation_enabled"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "multi_agent_coordination",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('::1', 54321, 0, 0), [Errno 111] Connect call failed ('127.0.0.1', 54321)]"
+        }
+      },
+      "expected_fields": [
+        "decision_outcome",
+        "confidence",
+        "requires_human_review"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "automation_status_monitoring",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('127.0.0.1', 54321), [Errno 111] Connect call failed ('::1', 54321, 0, 0)]"
+        }
+      },
+      "expected_fields": [
+        "automation_health",
+        "recent_activity"
+      ],
+      "actual_fields": []
+    },
+    {
+      "test_name": "automation_engine_decision",
+      "status": "failed",
+      "result": {
+        "error": {
+          "message": "Cannot connect to host localhost:54321 ssl:default [Multiple exceptions: [Errno 111] Connect call failed ('::1', 54321, 0, 0), [Errno 111] Connect call failed ('127.0.0.1', 54321)]"
+        }
+      },
+      "expected_fields": [
+        "decision_outcome",
+        "confidence",
+        "automation_applied"
+      ],
+      "actual_fields": []
+    }
+  ],
+  "system_integration": {
+    "automation_engine_functional": false,
+    "policy_automation_functional": false,
+    "workflow_creation_functional": false,
+    "monitoring_functional": false
+  },
+  "performance_assessment": {
+    "avg_response_time": 0.0,
+    "automation_success_rate": 0.0,
+    "confidence_scores": []
+  }
+}

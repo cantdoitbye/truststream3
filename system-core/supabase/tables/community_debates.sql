@@ -1,0 +1,20 @@
+CREATE TABLE community_debates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    community_id UUID REFERENCES communities(id),
+    topic VARCHAR(500) NOT NULL,
+    description TEXT,
+    debate_type VARCHAR(50) DEFAULT 'open' CHECK (debate_type IN ('open',
+    'structured',
+    'moderated')),
+    status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active',
+    'concluded',
+    'archived')),
+    moderator_id UUID,
+    participant_count INTEGER DEFAULT 0,
+    total_arguments INTEGER DEFAULT 0,
+    engagement_score DECIMAL(5,2) DEFAULT 0,
+    visual_content_ids JSONB DEFAULT '[]',
+    ai_insights JSONB DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    concluded_at TIMESTAMP WITH TIME ZONE
+);

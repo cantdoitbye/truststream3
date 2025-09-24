@@ -1,0 +1,197 @@
+# TrustStream v4.2 Development Docker Compose
+# Author: MiniMax Agent
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+        BUILD_NUMBER: ${BUILD_NUMBER:-dev}
+    container_name: truststream-app-dev
+    ports:
+      - "3000:3000"
+      - "8080:8080"  # Metrics port
+      - "9229:9229"  # Debug port
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOST=0.0.0.0
+      - LOG_LEVEL=debug
+      - ENVIRONMENT=development
+      # Enable Node.js debugging
+      - NODE_OPTIONS=--inspect=0.0.0.0:9229 --max-old-space-size=4096
+    env_file:
+      - ../../.env
+    volumes:
+      # Hot reload for development
+      - ../../src:/app/src:ro
+      - ../../package.json:/app/package.json:ro
+      - ../../package-lock.json:/app/package-lock.json:ro
+      # Logs
+      - ./logs:/app/logs
+      # Node modules cache
+      - node_modules:/app/node_modules
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`localhost`)"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
+
+  redis:
+    image: redis:7-alpine
+    container_name: truststream-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis.conf:/etc/redis/redis.conf:ro
+    command: redis-server /etc/redis/redis.conf
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: truststream-postgres-dev
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=truststream_dev
+      - POSTGRES_USER=truststream
+      - POSTGRES_PASSWORD=dev_password_change_me
+      - POSTGRES_INITDB_ARGS=--auth-local=trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../database/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U truststream -d truststream_dev"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:1.21-alpine
+    container_name: truststream-nginx-dev
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Development tools
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: truststream-mailhog-dev
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    container_name: truststream-minio-dev
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin123
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Monitoring stack
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: truststream-prometheus-dev
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: truststream-grafana-dev
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - truststream-dev
+    restart: unless-stopped
+
+volumes:
+  node_modules:
+  redis_data:
+  postgres_data:
+  minio_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  truststream-dev:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

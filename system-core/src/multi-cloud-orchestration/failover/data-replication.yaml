@@ -1,0 +1,441 @@
+# Data Replication and Backup System for RPO < 5 seconds
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-replicator
+  namespace: failover-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: data-replicator
+  template:
+    metadata:
+      labels:
+        app: data-replicator
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: data-replicator
+      containers:
+      - name: data-replicator
+        image: quay.io/trustram/data-replicator:v4.4.0
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: RPO_TARGET_SECONDS
+          value: "5"
+        - name: REPLICATION_LAG_THRESHOLD
+          value: "3"
+        - name: BATCH_SIZE
+          value: "1000"
+        - name: MAX_RETRY_ATTEMPTS
+          value: "3"
+        - name: HEALTH_CHECK_INTERVAL
+          value: "10"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+        - name: credentials
+          mountPath: /etc/credentials
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: config
+        configMap:
+          name: data-replication-config
+      - name: credentials
+        secret:
+          secretName: database-credentials
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: data-replicator
+  namespace: failover-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: data-replicator
+rules:
+- apiGroups: [""]
+  resources: ["secrets", "configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: data-replicator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: data-replicator
+subjects:
+- kind: ServiceAccount
+  name: data-replicator
+  namespace: failover-system
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-replication-config
+  namespace: failover-system
+data:
+  config.yaml: |
+    replication:
+      rpo_target: 5  # seconds
+      lag_threshold: 3  # seconds
+      batch_size: 1000
+      max_retry_attempts: 3
+      
+      primary_database:
+        type: "postgresql"
+        host: "postgresql-primary.database.svc.cluster.local"
+        port: 5432
+        database: "trustram"
+        username: "postgres"
+        ssl_mode: "require"
+        connection_pool_size: 20
+      
+      replica_databases:
+        - name: "aws-replica"
+          type: "postgresql"
+          host: "postgresql-aws.us-east-1.rds.amazonaws.com"
+          port: 5432
+          database: "trustram"
+          username: "postgres"
+          ssl_mode: "require"
+          priority: 1
+          lag_threshold: 5
+        
+        - name: "azure-replica"
+          type: "postgresql"
+          host: "postgresql-azure.postgres.database.azure.com"
+          port: 5432
+          database: "trustram"
+          username: "postgres@postgresql-azure"
+          ssl_mode: "require"
+          priority: 2
+          lag_threshold: 10
+        
+        - name: "gcp-replica"
+          type: "postgresql"
+          host: "postgresql-gcp.us-central1.gcp.cloud.sql"
+          port: 5432
+          database: "trustram"
+          username: "postgres"
+          ssl_mode: "require"
+          priority: 3
+          lag_threshold: 30
+    
+    change_data_capture:
+      enabled: true
+      method: "logical_replication"
+      slot_name: "trustram_replication_slot"
+      publication_name: "trustram_publication"
+      
+      tables:
+        - name: "users"
+          replication_type: "synchronous"
+          priority: "high"
+        - name: "transactions"
+          replication_type: "synchronous"
+          priority: "high"
+        - name: "audit_logs"
+          replication_type: "asynchronous"
+          priority: "medium"
+        - name: "analytics_data"
+          replication_type: "asynchronous"
+          priority: "low"
+      
+      conflict_resolution:
+        strategy: "last_writer_wins"
+        timestamp_column: "updated_at"
+        conflict_table: "replication_conflicts"
+    
+    backup:
+      strategy: "continuous"
+      frequency: "5m"  # every 5 minutes
+      retention:
+        daily: 30
+        weekly: 12
+        monthly: 12
+        yearly: 7
+      
+      storage_locations:
+        - type: "s3"
+          bucket: "trustram-backups-us-east-1"
+          region: "us-east-1"
+          encryption: "AES256"
+          compression: "gzip"
+        
+        - type: "azure_blob"
+          container: "trustram-backups"
+          account: "trustrambackups"
+          encryption: "enabled"
+          compression: "gzip"
+        
+        - type: "gcs"
+          bucket: "trustram-backups-us-central1"
+          region: "us-central1"
+          encryption: "google_managed"
+          compression: "gzip"
+      
+      incremental_backup:
+        enabled: true
+        wal_archiving: true
+        checkpoint_frequency: "1m"
+        archive_timeout: "60s"
+    
+    monitoring:
+      metrics:
+        - name: "replication_lag"
+          type: "gauge"
+          labels: ["replica_name", "database"]
+        
+        - name: "replication_throughput"
+          type: "counter"
+          labels: ["replica_name", "operation_type"]
+        
+        - name: "backup_status"
+          type: "gauge"
+          labels: ["backup_type", "storage_location"]
+        
+        - name: "data_loss_events"
+          type: "counter"
+          labels: ["replica_name", "table_name"]
+      
+      alerts:
+        - name: "replication_lag_high"
+          condition: "replication_lag > 5"
+          severity: "critical"
+          duration: "30s"
+        
+        - name: "replication_stopped"
+          condition: "replication_throughput == 0"
+          severity: "critical"
+          duration: "1m"
+        
+        - name: "backup_failed"
+          condition: "backup_status == 0"
+          severity: "warning"
+          duration: "5m"
+        
+        - name: "rpo_exceeded"
+          condition: "replication_lag > 5"
+          severity: "critical"
+          duration: "1s"
+
+---
+# PostgreSQL Backup CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgresql-backup
+  namespace: failover-system
+spec:
+  schedule: "*/5 * * * *"  # Every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: data-replicator
+          containers:
+          - name: postgresql-backup
+            image: postgres:15
+            command:
+            - /bin/bash
+            - -c
+            - |
+              export PGPASSWORD="$POSTGRES_PASSWORD"
+              TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+              BACKUP_FILE="trustram_backup_${TIMESTAMP}.sql"
+              
+              # Create backup
+              pg_dump -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB > /tmp/$BACKUP_FILE
+              
+              # Compress backup
+              gzip /tmp/$BACKUP_FILE
+              
+              # Upload to S3
+              aws s3 cp /tmp/${BACKUP_FILE}.gz s3://trustram-backups-us-east-1/continuous/${BACKUP_FILE}.gz
+              
+              # Upload to Azure Blob
+              az storage blob upload --file /tmp/${BACKUP_FILE}.gz --name continuous/${BACKUP_FILE}.gz --container-name trustram-backups --account-name trustrambackups
+              
+              # Upload to GCS
+              gsutil cp /tmp/${BACKUP_FILE}.gz gs://trustram-backups-us-central1/continuous/${BACKUP_FILE}.gz
+              
+              # Cleanup local file
+              rm /tmp/${BACKUP_FILE}.gz
+              
+              echo "Backup completed: ${BACKUP_FILE}.gz"
+            env:
+            - name: POSTGRES_HOST
+              value: "postgresql-primary.database.svc.cluster.local"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "trustram"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-credentials
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-credentials
+                  key: aws-secret-access-key
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            emptyDir: {}
+          restartPolicy: OnFailure
+
+---
+# Point-in-Time Recovery Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pitr-service
+  namespace: failover-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pitr-service
+  template:
+    metadata:
+      labels:
+        app: pitr-service
+    spec:
+      serviceAccountName: data-replicator
+      containers:
+      - name: pitr-service
+        image: quay.io/trustram/pitr-service:v4.4.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: WAL_ARCHIVE_PATH
+          value: "s3://trustram-backups-us-east-1/wal-archive/"
+        - name: BACKUP_PATH
+          value: "s3://trustram-backups-us-east-1/continuous/"
+        - name: RECOVERY_TARGET_TIME_DEFAULT
+          value: "5"  # 5 seconds ago
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: recovery-config
+          mountPath: /etc/recovery
+      volumes:
+      - name: recovery-config
+        configMap:
+          name: pitr-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pitr-config
+  namespace: failover-system
+data:
+  recovery.conf: |
+    restore_command = 'aws s3 cp s3://trustram-backups-us-east-1/wal-archive/%f %p'
+    recovery_target_time = 'RECOVERY_TARGET_TIME'
+    recovery_target_timeline = 'latest'
+    recovery_target_action = 'promote'
+  
+  recovery_script.sh: |
+    #!/bin/bash
+    set -e
+    
+    RECOVERY_TIME=${1:-"$(date -d '5 seconds ago' '+%Y-%m-%d %H:%M:%S')"}
+    BACKUP_FILE=${2:-"$(aws s3 ls s3://trustram-backups-us-east-1/continuous/ | tail -1 | awk '{print $4}')"}
+    
+    echo "Starting Point-in-Time Recovery to: $RECOVERY_TIME"
+    echo "Using backup file: $BACKUP_FILE"
+    
+    # Stop PostgreSQL
+    pg_ctl stop -D /var/lib/postgresql/data
+    
+    # Remove old data directory
+    rm -rf /var/lib/postgresql/data/*
+    
+    # Download and restore backup
+    aws s3 cp s3://trustram-backups-us-east-1/continuous/$BACKUP_FILE /tmp/backup.sql.gz
+    gunzip /tmp/backup.sql.gz
+    
+    # Initialize new data directory
+    initdb -D /var/lib/postgresql/data
+    
+    # Restore from backup
+    psql -d postgres < /tmp/backup.sql
+    
+    # Configure recovery
+    sed "s/RECOVERY_TARGET_TIME/$RECOVERY_TIME/g" /etc/recovery/recovery.conf > /var/lib/postgresql/data/recovery.conf
+    
+    # Start PostgreSQL in recovery mode
+    pg_ctl start -D /var/lib/postgresql/data
+    
+    echo "Point-in-Time Recovery completed successfully"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-replicator
+  namespace: failover-system
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: data-replicator

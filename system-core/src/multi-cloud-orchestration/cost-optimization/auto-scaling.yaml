@@ -1,0 +1,432 @@
+# Intelligent Auto-Scaling Configuration
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: multi-cloud-hpa
+  namespace: trustram-system
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: trustram-api
+  minReplicas: 2
+  maxReplicas: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: requests_per_second
+      target:
+        type: AverageValue
+        averageValue: "100"
+  - type: External
+    external:
+      metric:
+        name: queue_length
+        selector:
+          matchLabels:
+            queue: "trustram-processing"
+      target:
+        type: AverageValue
+        averageValue: "10"
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Min
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+      - type: Pods
+        value: 4
+        periodSeconds: 30
+      selectPolicy: Max
+
+---
+# Vertical Pod Autoscaler for Right-Sizing
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: multi-cloud-vpa
+  namespace: trustram-system
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: trustram-api
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: trustram-api
+      controlledResources: ["cpu", "memory"]
+      minAllowed:
+        cpu: 100m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 2000m
+        memory: 4Gi
+      controlledValues: RequestsAndLimits
+
+---
+# Predictive Scaling using Custom Metrics
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predictive-scaler
+  namespace: cost-optimization
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: predictive-scaler
+  template:
+    metadata:
+      labels:
+        app: predictive-scaler
+    spec:
+      serviceAccountName: predictive-scaler
+      containers:
+      - name: predictive-scaler
+        image: quay.io/trustram/predictive-scaler:v4.4.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PROMETHEUS_URL
+          value: "http://prometheus.monitoring.svc.cluster.local:9090"
+        - name: PREDICTION_HORIZON
+          value: "3600"  # 1 hour
+        - name: SCALING_CONFIDENCE_THRESHOLD
+          value: "0.8"
+        - name: MODEL_RETRAIN_INTERVAL
+          value: "86400"  # 24 hours
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: models
+          mountPath: /opt/models
+        - name: config
+          mountPath: /etc/config
+      volumes:
+      - name: models
+        persistentVolumeClaim:
+          claimName: ml-models-pvc
+      - name: config
+        configMap:
+          name: predictive-scaler-config
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: predictive-scaler
+  namespace: cost-optimization
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: predictive-scaler
+rules:
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "patch", "update"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["pods", "nodes"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: predictive-scaler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: predictive-scaler
+subjects:
+- kind: ServiceAccount
+  name: predictive-scaler
+  namespace: cost-optimization
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: predictive-scaler-config
+  namespace: cost-optimization
+data:
+  config.yaml: |
+    prediction:
+      horizon: 3600  # 1 hour
+      confidence_threshold: 0.8
+      model_type: "lstm"  # LSTM for time series prediction
+      features:
+        - request_rate
+        - cpu_utilization
+        - memory_utilization
+        - queue_length
+        - response_time
+        - error_rate
+      
+      seasonality:
+        - type: "daily"
+          period: 86400
+        - type: "weekly"
+          period: 604800
+        - type: "hourly"
+          period: 3600
+    
+    scaling:
+      safety_margin: 0.2  # 20% buffer
+      max_scale_up_rate: 2.0  # 2x in one step
+      max_scale_down_rate: 0.5  # 50% in one step
+      min_prediction_confidence: 0.7
+      
+      policies:
+        - name: "traffic_spike_prediction"
+          enabled: true
+          conditions:
+            - predicted_increase > 0.5
+            - confidence > 0.8
+          actions:
+            - preemptive_scale_up
+            - warm_standby_activation
+        
+        - name: "traffic_drop_prediction"
+          enabled: true
+          conditions:
+            - predicted_decrease > 0.3
+            - confidence > 0.7
+          actions:
+            - gradual_scale_down
+            - resource_consolidation
+        
+        - name: "cost_optimization_window"
+          enabled: true
+          conditions:
+            - low_traffic_period
+            - cost_savings > 0.2
+          actions:
+            - migrate_to_spot_instances
+            - enable_cluster_autoscaler
+    
+    alerts:
+      prediction_accuracy_low:
+        threshold: 0.6
+        window: "2h"
+      
+      scaling_decision_override:
+        threshold: 5  # 5 overrides in window
+        window: "1h"
+      
+      model_drift_detected:
+        threshold: 0.1  # 10% accuracy drop
+        window: "24h"
+
+---
+# Cluster Autoscaler for Node-Level Scaling
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-autoscaler
+  namespace: kube-system
+  labels:
+    app: cluster-autoscaler
+spec:
+  selector:
+    matchLabels:
+      app: cluster-autoscaler
+  template:
+    metadata:
+      labels:
+        app: cluster-autoscaler
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8085'
+    spec:
+      priorityClassName: system-cluster-critical
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: cluster-autoscaler
+      containers:
+      - image: k8s.gcr.io/autoscaling/cluster-autoscaler:v1.28.2
+        name: cluster-autoscaler
+        resources:
+          limits:
+            cpu: 100m
+            memory: 600Mi
+          requests:
+            cpu: 100m
+            memory: 600Mi
+        command:
+        - ./cluster-autoscaler
+        - --v=4
+        - --stderrthreshold=info
+        - --cloud-provider=clusterapi
+        - --max-nodes-total=100
+        - --cores-total=0:320
+        - --memory-total=0:1280
+        - --node-group-auto-discovery=clusterapi:namespace=multi-cloud-system
+        - --scale-down-enabled=true
+        - --scale-down-delay-after-add=10m
+        - --scale-down-unneeded-time=10m
+        - --scale-down-utilization-threshold=0.5
+        - --skip-nodes-with-local-storage=false
+        - --expander=priority
+        - --balance-similar-node-groups=true
+        - --skip-nodes-with-system-pods=false
+        env:
+        - name: ARM_SUBSCRIPTION_ID
+          valueFrom:
+            secretKeyRef:
+              key: azure-subscription-id
+              name: cluster-autoscaler-cloud-config
+        - name: ARM_RESOURCE_GROUP
+          valueFrom:
+            secretKeyRef:
+              key: azure-resource-group
+              name: cluster-autoscaler-cloud-config
+        - name: ARM_TENANT_ID
+          valueFrom:
+            secretKeyRef:
+              key: azure-tenant-id
+              name: cluster-autoscaler-cloud-config
+        - name: ARM_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: azure-client-id
+              name: cluster-autoscaler-cloud-config
+        - name: ARM_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: azure-client-secret
+              name: cluster-autoscaler-cloud-config
+        volumeMounts:
+        - name: ssl-certs
+          mountPath: /etc/ssl/certs/ca-certificates.crt
+          readOnly: true
+        imagePullPolicy: "Always"
+      volumes:
+      - name: ssl-certs
+        hostPath:
+          path: "/etc/ssl/certs/ca-certificates.crt"
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+  name: cluster-autoscaler
+  namespace: kube-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-autoscaler
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+rules:
+- apiGroups: [""]
+  resources: ["events", "endpoints"]
+  verbs: ["create", "patch"]
+- apiGroups: [""]
+  resources: ["pods/eviction"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["pods/status"]
+  verbs: ["update"]
+- apiGroups: [""]
+  resources: ["endpoints"]
+  resourceNames: ["cluster-autoscaler"]
+  verbs: ["get", "update"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["watch", "list", "get", "update"]
+- apiGroups: [""]
+  resources: ["namespaces", "pods", "services", "replicationcontrollers", "persistentvolumeclaims", "persistentvolumes"]
+  verbs: ["watch", "list", "get"]
+- apiGroups: ["extensions"]
+  resources: ["replicasets", "daemonsets"]
+  verbs: ["watch", "list", "get"]
+- apiGroups: ["policy"]
+  resources: ["poddisruptionbudgets"]
+  verbs: ["watch", "list"]
+- apiGroups: ["apps"]
+  resources: ["statefulsets", "replicasets", "daemonsets"]
+  verbs: ["watch", "list", "get"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses", "csinodes", "csidrivers", "csistoragecapacities"]
+  verbs: ["watch", "list", "get"]
+- apiGroups: ["batch", "extensions"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "patch"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["create"]
+- apiGroups: ["coordination.k8s.io"]
+  resourceNames: ["cluster-autoscaler"]
+  resources: ["leases"]
+  verbs: ["get", "update"]
+- apiGroups: ["cluster.x-k8s.io"]
+  resources: ["machinedeployments", "machinedeployments/scale", "machines", "machinesets", "machinepools"]
+  verbs: ["get", "list", "update", "watch"]
+- apiGroups: ["infrastructure.cluster.x-k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "update", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-autoscaler
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-autoscaler
+subjects:
+- kind: ServiceAccount
+  name: cluster-autoscaler
+  namespace: kube-system

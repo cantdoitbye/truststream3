@@ -1,0 +1,194 @@
+# Multi-Cloud Cluster Federation Configuration
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: multi-cloud-system
+  labels:
+    name: multi-cloud-system
+    istio-injection: enabled
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trustram-aws-kubeconfig
+  namespace: multi-cloud-system
+  labels:
+    cluster.x-k8s.io/cluster-name: trustram-aws-cluster
+type: Opaque
+data:
+  kubeconfig: "${AWS_KUBECONFIG_B64}"  # Base64 encoded kubeconfig
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trustram-azure-kubeconfig
+  namespace: multi-cloud-system
+  labels:
+    cluster.x-k8s.io/cluster-name: trustram-azure-cluster
+type: Opaque
+data:
+  kubeconfig: "${AZURE_KUBECONFIG_B64}"  # Base64 encoded kubeconfig
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trustram-gcp-kubeconfig
+  namespace: multi-cloud-system
+  labels:
+    cluster.x-k8s.io/cluster-name: trustram-gcp-cluster
+type: Opaque
+data:
+  kubeconfig: "${GCP_KUBECONFIG_B64}"  # Base64 encoded kubeconfig
+
+---
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: control-plane
+  namespace: istio-system
+spec:
+  values:
+    pilot:
+      env:
+        EXTERNAL_ISTIOD: true
+  components:
+    pilot:
+      k8s:
+        env:
+        - name: PILOT_ENABLE_CROSS_CLUSTER_WORKLOAD_ENTRY
+          value: true
+        - name: PILOT_ENABLE_REMOTE_JWKS_ENDPOINT
+          value: true
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: cross-network-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: eastwestgateway
+  servers:
+  - port:
+      number: 15021
+      name: status-port
+      protocol: TLS
+    tls:
+      mode: ISTIO_MUTUAL
+    hosts:
+    - cross-network.local
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-registry
+  namespace: multi-cloud-system
+data:
+  clusters.yaml: |
+    clusters:
+    - name: aws-cluster
+      endpoint: https://trustram-aws-cluster.us-east-1.elb.amazonaws.com
+      region: us-east-1
+      provider: aws
+      network: aws-network
+    - name: azure-cluster
+      endpoint: https://trustram-azure-cluster.eastus.cloudapp.azure.com
+      region: eastus
+      provider: azure
+      network: azure-network
+    - name: gcp-cluster
+      endpoint: https://trustram-gcp-cluster.us-central1.gcp.example.com
+      region: us-central1
+      provider: gcp
+      network: gcp-network
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-manager
+  namespace: multi-cloud-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cluster-manager
+  template:
+    metadata:
+      labels:
+        app: cluster-manager
+    spec:
+      serviceAccountName: cluster-manager
+      containers:
+      - name: cluster-manager
+        image: quay.io/trustram/cluster-manager:v4.4.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: CLUSTER_REGISTRY_CONFIG
+          value: "/etc/cluster-registry/clusters.yaml"
+        volumeMounts:
+        - name: cluster-registry
+          mountPath: /etc/cluster-registry
+        - name: aws-kubeconfig
+          mountPath: /etc/kubeconfigs/aws
+        - name: azure-kubeconfig
+          mountPath: /etc/kubeconfigs/azure
+        - name: gcp-kubeconfig
+          mountPath: /etc/kubeconfigs/gcp
+      volumes:
+      - name: cluster-registry
+        configMap:
+          name: cluster-registry
+      - name: aws-kubeconfig
+        secret:
+          secretName: trustram-aws-kubeconfig
+      - name: azure-kubeconfig
+        secret:
+          secretName: trustram-azure-kubeconfig
+      - name: gcp-kubeconfig
+        secret:
+          secretName: trustram-gcp-kubeconfig
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-manager
+  namespace: multi-cloud-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-manager
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "services", "endpoints", "pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["cluster.x-k8s.io"]
+  resources: ["clusters", "machines"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-manager
+subjects:
+- kind: ServiceAccount
+  name: cluster-manager
+  namespace: multi-cloud-system

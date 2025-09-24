@@ -1,0 +1,1961 @@
+{
+  "timestamp": "2025-09-21T09:32:37.541443",
+  "phase_1": {
+    "total_tests": 13,
+    "passed": 12,
+    "failed": 1,
+    "tests": [
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 1.0643506050109863,
+        "response_size": 3297,
+        "data": {
+          "data": [
+            {
+              "ecosystem_layer": "economic_ai",
+              "domain": "dao_governance",
+              "complexity_level": "complex",
+              "knowledge_type": "procedure",
+              "entry_count": 1,
+              "avg_quality_score": 89.5,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "engagement_ai",
+              "domain": "agent_communication",
+              "complexity_level": "complex",
+              "knowledge_type": "reference",
+              "entry_count": 1,
+              "avg_quality_score": 88.5,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "community_ai",
+              "domain": "content_strategy",
+              "complexity_level": "intermediate",
+              "knowledge_type": "analysis",
+              "entry_count": 1,
+              "avg_quality_score": 85.5,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "llm_orchestration",
+              "complexity_level": "expert",
+              "knowledge_type": "procedure",
+              "entry_count": 1,
+              "avg_quality_score": 96,
+              "avg_freshness_score": 100,
+              "validated_count": 1
+            },
+            {
+              "ecosystem_layer": "community_ai",
+              "domain": "compliance",
+              "complexity_level": "expert",
+              "knowledge_type": "template",
+              "entry_count": 1,
+              "avg_quality_score": 94,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "context_management",
+              "complexity_level": "intermediate",
+              "knowledge_type": "procedure",
+              "entry_count": 1,
+              "avg_quality_score": 87.5,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "research_automation",
+              "complexity_level": "expert",
+              "knowledge_type": "procedure",
+              "entry_count": 1,
+              "avg_quality_score": 90.5,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "quality_assessment",
+              "complexity_level": "complex",
+              "knowledge_type": "template",
+              "entry_count": 1,
+              "avg_quality_score": 88,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "economic_ai",
+              "domain": "pricing_strategy",
+              "complexity_level": "complex",
+              "knowledge_type": "analysis",
+              "entry_count": 1,
+              "avg_quality_score": 87,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "community_ai",
+              "domain": "community_leadership",
+              "complexity_level": "complex",
+              "knowledge_type": "insight",
+              "entry_count": 1,
+              "avg_quality_score": 91,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "economic_ai",
+              "domain": "tokenomics",
+              "complexity_level": "expert",
+              "knowledge_type": "concept",
+              "entry_count": 1,
+              "avg_quality_score": 91.5,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "engagement_ai",
+              "domain": "workflow_automation",
+              "complexity_level": "expert",
+              "knowledge_type": "reference",
+              "entry_count": 1,
+              "avg_quality_score": 93,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "knowledge_integration",
+              "complexity_level": "expert",
+              "knowledge_type": "insight",
+              "entry_count": 1,
+              "avg_quality_score": 92,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "vector_management",
+              "complexity_level": "complex",
+              "knowledge_type": "concept",
+              "entry_count": 1,
+              "avg_quality_score": 89,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "engagement_ai",
+              "domain": "reliability_scoring",
+              "complexity_level": "expert",
+              "knowledge_type": "analysis",
+              "entry_count": 1,
+              "avg_quality_score": 90,
+              "avg_freshness_score": 100,
+              "validated_count": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "domain": "system_testing",
+              "complexity_level": "basic",
+              "knowledge_type": "reference",
+              "entry_count": 7,
+              "avg_quality_score": 88.57142857142857,
+              "avg_freshness_score": 100,
+              "validated_count": 5
+            }
+          ]
+        },
+        "error": null,
+        "test_name": "Knowledge Base Summary",
+        "endpoint": "unified-knowledge-base/summary"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.42189526557922363,
+        "response_size": 71,
+        "data": {
+          "data": [],
+          "query_text": "LLM orchestration",
+          "similarity_threshold": 0.7
+        },
+        "error": null,
+        "test_name": "Vector Search Integration",
+        "endpoint": "unified-knowledge-base"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 1.0158259868621826,
+        "response_size": 5214,
+        "data": {
+          "data": [
+            {
+              "id": "10a29144-0c9e-47a2-9de4-72ad88031f64",
+              "primary_knowledge_id": "82b9be99-4221-4322-830b-2034b87035ba",
+              "related_knowledge_id": "7dc9ffa4-c4fc-4516-931d-35289dce651f",
+              "correlation_type": "complementary",
+              "correlation_strength": 0.92,
+              "correlation_metadata": {
+                "relationship_reason": "Research triggering enhances quality assessment"
+              },
+              "auto_detected": true,
+              "validated_by_agent_id": null,
+              "created_at": "2025-09-19T05:08:32.58715+00:00",
+              "updated_at": "2025-09-19T05:08:32.58715+00:00",
+              "primary_knowledge": {
+                "id": "82b9be99-4221-4322-830b-2034b87035ba",
+                "title": "Intelligent Research Triggering",
+                "domain": "research_automation",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "expert"
+              },
+              "related_knowledge": {
+                "id": "7dc9ffa4-c4fc-4516-931d-35289dce651f",
+                "title": "Quality Assessment Frameworks",
+                "domain": "quality_assessment",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "complex"
+              }
+            },
+            {
+              "id": "e1b59a39-cc30-4564-af42-2d1bb08f6930",
+              "primary_knowledge_id": "aaca6438-c87e-477e-acc1-10fae58d6bb1",
+              "related_knowledge_id": "124abb50-1651-4cf6-95ae-7b3f35811763",
+              "correlation_type": "prerequisite",
+              "correlation_strength": 0.88,
+              "correlation_metadata": {
+                "relationship_reason": "Agent discovery is prerequisite for reliability scoring"
+              },
+              "auto_detected": true,
+              "validated_by_agent_id": null,
+              "created_at": "2025-09-19T05:08:32.58715+00:00",
+              "updated_at": "2025-09-19T05:08:32.58715+00:00",
+              "primary_knowledge": {
+                "id": "aaca6438-c87e-477e-acc1-10fae58d6bb1",
+                "title": "Agent Discovery Protocols",
+                "domain": "agent_communication",
+                "ecosystem_layer": "engagement_ai",
+                "complexity_level": "complex"
+              },
+              "related_knowledge": {
+                "id": "124abb50-1651-4cf6-95ae-7b3f35811763",
+                "title": "Reliability Scoring Algorithms",
+                "domain": "reliability_scoring",
+                "ecosystem_layer": "engagement_ai",
+                "complexity_level": "expert"
+              }
+            },
+            {
+              "id": "a6d1bf8c-38d1-4101-aa4a-c6828700210f",
+              "primary_knowledge_id": "28d6f297-4887-427c-be60-d17c7352b744",
+              "related_knowledge_id": "0c9e68b2-c438-4d9b-a920-c3e556ad5110",
+              "correlation_type": "prerequisite",
+              "correlation_strength": 0.85,
+              "correlation_metadata": {
+                "relationship_reason": "LLM orchestration requires cross-layer knowledge integration"
+              },
+              "auto_detected": true,
+              "validated_by_agent_id": null,
+              "created_at": "2025-09-19T05:08:32.58715+00:00",
+              "updated_at": "2025-09-19T05:08:32.58715+00:00",
+              "primary_knowledge": {
+                "id": "28d6f297-4887-427c-be60-d17c7352b744",
+                "title": "LLM Nexus Orchestration Patterns",
+                "domain": "llm_orchestration",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "expert"
+              },
+              "related_knowledge": {
+                "id": "0c9e68b2-c438-4d9b-a920-c3e556ad5110",
+                "title": "Cross-Layer Knowledge Correlation",
+                "domain": "knowledge_integration",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "expert"
+              }
+            },
+            {
+              "id": "4edaff1a-138e-4980-9436-f637a9b4f69c",
+              "primary_knowledge_id": "da2bc035-dd20-4ca2-a59e-6523f93a25b1",
+              "related_knowledge_id": "71da45e2-1b52-4adf-a680-35a7ae4159d0",
+              "correlation_type": "dependent",
+              "correlation_strength": 0.78,
+              "correlation_metadata": {
+                "relationship_reason": "Economic models depend on governance mechanisms"
+              },
+              "auto_detected": true,
+              "validated_by_agent_id": null,
+              "created_at": "2025-09-19T05:08:32.58715+00:00",
+              "updated_at": "2025-09-19T05:08:32.58715+00:00",
+              "primary_knowledge": {
+                "id": "da2bc035-dd20-4ca2-a59e-6523f93a25b1",
+                "title": "TrustCoin Economic Models",
+                "domain": "tokenomics",
+                "ecosystem_layer": "economic_ai",
+                "complexity_level": "expert"
+              },
+              "related_knowledge": {
+                "id": "71da45e2-1b52-4adf-a680-35a7ae4159d0",
+                "title": "DAO Governance Mechanisms",
+                "domain": "dao_governance",
+                "ecosystem_layer": "economic_ai",
+                "complexity_level": "complex"
+              }
+            },
+            {
+              "id": "b4afa503-0d2c-4ef6-bdfb-9504801ee855",
+              "primary_knowledge_id": "765cea4e-9627-401c-99a3-1841c5d120a4",
+              "related_knowledge_id": "aaca6438-c87e-477e-acc1-10fae58d6bb1",
+              "correlation_type": "complementary",
+              "correlation_strength": 0.75,
+              "correlation_metadata": {
+                "relationship_reason": "Workflow automation complements agent discovery"
+              },
+              "auto_detected": true,
+              "validated_by_agent_id": null,
+              "created_at": "2025-09-19T05:08:32.58715+00:00",
+              "updated_at": "2025-09-19T05:08:32.58715+00:00",
+              "primary_knowledge": {
+                "id": "765cea4e-9627-401c-99a3-1841c5d120a4",
+                "title": "Workflow Automation Architecture",
+                "domain": "workflow_automation",
+                "ecosystem_layer": "engagement_ai",
+                "complexity_level": "expert"
+              },
+              "related_knowledge": {
+                "id": "aaca6438-c87e-477e-acc1-10fae58d6bb1",
+                "title": "Agent Discovery Protocols",
+                "domain": "agent_communication",
+                "ecosystem_layer": "engagement_ai",
+                "complexity_level": "complex"
+              }
+            },
+            {
+              "id": "04d19f79-26d7-4ab0-8726-12551c5df19c",
+              "primary_knowledge_id": "64c6af2a-c9db-4502-bdca-48ab600fda76",
+              "related_knowledge_id": "6164b7c5-501a-4f31-88e6-da9c45789cee",
+              "correlation_type": "related",
+              "correlation_strength": 0.7,
+              "correlation_metadata": {
+                "relationship_reason": "Community leadership relates to compliance frameworks"
+              },
+              "auto_detected": true,
+              "validated_by_agent_id": null,
+              "created_at": "2025-09-19T05:08:32.58715+00:00",
+              "updated_at": "2025-09-19T05:08:32.58715+00:00",
+              "primary_knowledge": {
+                "id": "64c6af2a-c9db-4502-bdca-48ab600fda76",
+                "title": "AI Community Leadership Patterns",
+                "domain": "community_leadership",
+                "ecosystem_layer": "community_ai",
+                "complexity_level": "complex"
+              },
+              "related_knowledge": {
+                "id": "6164b7c5-501a-4f31-88e6-da9c45789cee",
+                "title": "Compliance Framework Implementation",
+                "domain": "compliance",
+                "ecosystem_layer": "community_ai",
+                "complexity_level": "expert"
+              }
+            }
+          ]
+        },
+        "error": null,
+        "test_name": "Correlation Analysis",
+        "endpoint": "cross-layer-knowledge-correlation/correlations"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 1.260270118713379,
+        "response_size": 1699,
+        "data": {
+          "data": {
+            "layers": {
+              "economic_ai": {
+                "domains": {
+                  "dao_governance": {
+                    "entry_count": 1,
+                    "avg_quality": 89.5,
+                    "complexity_breakdown": {}
+                  },
+                  "pricing_strategy": {
+                    "entry_count": 1,
+                    "avg_quality": 87,
+                    "complexity_breakdown": {}
+                  },
+                  "tokenomics": {
+                    "entry_count": 1,
+                    "avg_quality": 91.5,
+                    "complexity_breakdown": {}
+                  }
+                },
+                "total_entries": 3,
+                "avg_quality": 0
+              },
+              "engagement_ai": {
+                "domains": {
+                  "agent_communication": {
+                    "entry_count": 1,
+                    "avg_quality": 88.5,
+                    "complexity_breakdown": {}
+                  },
+                  "workflow_automation": {
+                    "entry_count": 1,
+                    "avg_quality": 93,
+                    "complexity_breakdown": {}
+                  },
+                  "reliability_scoring": {
+                    "entry_count": 1,
+                    "avg_quality": 90,
+                    "complexity_breakdown": {}
+                  }
+                },
+                "total_entries": 3,
+                "avg_quality": 0
+              },
+              "community_ai": {
+                "domains": {
+                  "content_strategy": {
+                    "entry_count": 1,
+                    "avg_quality": 85.5,
+                    "complexity_breakdown": {}
+                  },
+                  "compliance": {
+                    "entry_count": 1,
+                    "avg_quality": 94,
+                    "complexity_breakdown": {}
+                  },
+                  "community_leadership": {
+                    "entry_count": 1,
+                    "avg_quality": 91,
+                    "complexity_breakdown": {}
+                  }
+                },
+                "total_entries": 3,
+                "avg_quality": 0
+              },
+              "meta_ai": {
+                "domains": {
+                  "llm_orchestration": {
+                    "entry_count": 1,
+                    "avg_quality": 96,
+                    "complexity_breakdown": {}
+                  },
+                  "context_management": {
+                    "entry_count": 1,
+                    "avg_quality": 87.5,
+                    "complexity_breakdown": {}
+                  },
+                  "research_automation": {
+                    "entry_count": 1,
+                    "avg_quality": 90.5,
+                    "complexity_breakdown": {}
+                  },
+                  "quality_assessment": {
+                    "entry_count": 1,
+                    "avg_quality": 88,
+                    "complexity_breakdown": {}
+                  },
+                  "knowledge_integration": {
+                    "entry_count": 1,
+                    "avg_quality": 92,
+                    "complexity_breakdown": {}
+                  },
+                  "vector_management": {
+                    "entry_count": 1,
+                    "avg_quality": 89,
+                    "complexity_breakdown": {}
+                  },
+                  "system_testing": {
+                    "entry_count": 7,
+                    "avg_quality": 88.57142857142857,
+                    "complexity_breakdown": {}
+                  }
+                },
+                "total_entries": 13,
+                "avg_quality": 0
+              }
+            },
+            "cross_layer_connections": 6,
+            "total_knowledge_entries": 22,
+            "quality_distribution": {},
+            "complexity_distribution": {}
+          }
+        },
+        "error": null,
+        "test_name": "Ecosystem Overview",
+        "endpoint": "cross-layer-knowledge-correlation/ecosystem-overview"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.5327193737030029,
+        "response_size": 10379,
+        "data": {
+          "data": [
+            {
+              "id": "0cc6d33b-f547-4e94-84b9-4ee661b8e75c",
+              "knowledge_id": "61595e9e-3f65-4d66-b85b-2c71c3cc54c1",
+              "assessment_type": "automated",
+              "assessor_agent_id": null,
+              "assessment_model": "gpt-4-quality",
+              "quality_dimensions": {
+                "accuracy": 85,
+                "freshness": 100,
+                "relevance": 85,
+                "completeness": 90
+              },
+              "overall_score": 90,
+              "detailed_feedback": "Excellent knowledge entry with high quality across all dimensions.",
+              "improvement_suggestions": [],
+              "validation_checks": {
+                "has_tags": true,
+                "has_title": true,
+                "has_domain": true,
+                "has_content": false,
+                "has_summary": true,
+                "has_ecosystem_layer": true,
+                "content_length_adequate": false
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-20T11:27:24.522551+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "61595e9e-3f65-4d66-b85b-2c71c3cc54c1",
+                "title": "Integration Test Knowledge Entry",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "basic"
+              },
+              "assessor": null
+            },
+            {
+              "id": "2edba43d-594c-41e0-98cb-8d10f22cf3c7",
+              "knowledge_id": "08d2cd5f-397c-4a9d-bd23-10c274688710",
+              "assessment_type": "automated",
+              "assessor_agent_id": null,
+              "assessment_model": "gpt-4-quality",
+              "quality_dimensions": {
+                "accuracy": 85,
+                "freshness": 100,
+                "relevance": 85,
+                "completeness": 90
+              },
+              "overall_score": 90,
+              "detailed_feedback": "Excellent knowledge entry with high quality across all dimensions.",
+              "improvement_suggestions": [],
+              "validation_checks": {
+                "has_tags": true,
+                "has_title": true,
+                "has_domain": true,
+                "has_content": false,
+                "has_summary": true,
+                "has_ecosystem_layer": true,
+                "content_length_adequate": false
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T08:26:49.366697+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "08d2cd5f-397c-4a9d-bd23-10c274688710",
+                "title": "Integration Test Knowledge Entry",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "basic"
+              },
+              "assessor": null
+            },
+            {
+              "id": "2124643f-b180-48ca-bd05-f74453848d6c",
+              "knowledge_id": "638c58a3-03fa-4454-a751-02f92f8807be",
+              "assessment_type": "automated",
+              "assessor_agent_id": null,
+              "assessment_model": "gpt-4-quality",
+              "quality_dimensions": {
+                "accuracy": 85,
+                "freshness": 100,
+                "relevance": 85,
+                "completeness": 90
+              },
+              "overall_score": 90,
+              "detailed_feedback": "Excellent knowledge entry with high quality across all dimensions.",
+              "improvement_suggestions": [],
+              "validation_checks": {
+                "has_tags": true,
+                "has_title": true,
+                "has_domain": true,
+                "has_content": false,
+                "has_summary": true,
+                "has_ecosystem_layer": true,
+                "content_length_adequate": false
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T07:44:28.421209+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "638c58a3-03fa-4454-a751-02f92f8807be",
+                "title": "Integration Test Knowledge Entry",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "basic"
+              },
+              "assessor": null
+            },
+            {
+              "id": "4753b5c6-8b58-4584-b6e6-c86098dcc778",
+              "knowledge_id": "0f51dda9-5901-48c0-8bcd-7c9a53100ff3",
+              "assessment_type": "automated",
+              "assessor_agent_id": null,
+              "assessment_model": "gpt-4-quality",
+              "quality_dimensions": {
+                "accuracy": 85,
+                "freshness": 100,
+                "relevance": 85,
+                "completeness": 90
+              },
+              "overall_score": 90,
+              "detailed_feedback": "Excellent knowledge entry with high quality across all dimensions.",
+              "improvement_suggestions": [],
+              "validation_checks": {
+                "has_tags": true,
+                "has_title": true,
+                "has_domain": true,
+                "has_content": false,
+                "has_summary": true,
+                "has_ecosystem_layer": true,
+                "content_length_adequate": false
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T07:43:58.026221+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "0f51dda9-5901-48c0-8bcd-7c9a53100ff3",
+                "title": "Integration Test Knowledge Entry",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "basic"
+              },
+              "assessor": null
+            },
+            {
+              "id": "c84244a5-6fa2-419a-8612-bcfd0a985094",
+              "knowledge_id": "ba36e05c-d928-48b0-bb3c-e20bba236dc2",
+              "assessment_type": "automated",
+              "assessor_agent_id": null,
+              "assessment_model": "gpt-4-quality",
+              "quality_dimensions": {
+                "accuracy": 85,
+                "freshness": 100,
+                "relevance": 85,
+                "completeness": 90
+              },
+              "overall_score": 90,
+              "detailed_feedback": "Excellent knowledge entry with high quality across all dimensions.",
+              "improvement_suggestions": [],
+              "validation_checks": {
+                "has_tags": true,
+                "has_title": true,
+                "has_domain": true,
+                "has_content": false,
+                "has_summary": true,
+                "has_ecosystem_layer": true,
+                "content_length_adequate": false
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T07:41:22.760869+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "ba36e05c-d928-48b0-bb3c-e20bba236dc2",
+                "title": "Integration Test Knowledge Entry",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "basic"
+              },
+              "assessor": null
+            },
+            {
+              "id": "6dea83e8-9e16-4af4-ba87-9eabbcc4aafe",
+              "knowledge_id": "28d6f297-4887-427c-be60-d17c7352b744",
+              "assessment_type": "automated",
+              "assessor_agent_id": null,
+              "assessment_model": "gpt-4-quality",
+              "quality_dimensions": {
+                "accuracy": 90,
+                "freshness": 100,
+                "relevance": 100,
+                "completeness": 95
+              },
+              "overall_score": 96,
+              "detailed_feedback": "Excellent knowledge entry with high quality across all dimensions.",
+              "improvement_suggestions": [],
+              "validation_checks": {
+                "has_tags": true,
+                "has_title": true,
+                "has_domain": true,
+                "has_content": true,
+                "has_summary": true,
+                "has_ecosystem_layer": true,
+                "content_length_adequate": true
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T07:40:18.434825+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "28d6f297-4887-427c-be60-d17c7352b744",
+                "title": "LLM Nexus Orchestration Patterns",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "expert"
+              },
+              "assessor": null
+            },
+            {
+              "id": "fcda6f84-45a1-4850-a01a-31f55ac6e6dc",
+              "knowledge_id": "64c6af2a-c9db-4502-bdca-48ab600fda76",
+              "assessment_type": "automated",
+              "assessor_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "assessment_model": "gpt-4-quality-assessor",
+              "quality_dimensions": {
+                "accuracy": 92,
+                "freshness": 90,
+                "relevance": 95,
+                "completeness": 88
+              },
+              "overall_score": 91,
+              "detailed_feedback": "High-quality knowledge entry with comprehensive coverage and accurate information.",
+              "improvement_suggestions": [
+                "Add more cross-references",
+                "Include recent updates",
+                "Expand practical examples"
+              ],
+              "validation_checks": {
+                "fact_check": "passed",
+                "consistency_check": "passed",
+                "source_verification": "verified"
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T05:09:11.110818+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "64c6af2a-c9db-4502-bdca-48ab600fda76",
+                "title": "AI Community Leadership Patterns",
+                "ecosystem_layer": "community_ai",
+                "complexity_level": "complex"
+              },
+              "assessor": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_name": "agent-analyzer-001",
+                "agent_type": "analysis_specialist"
+              }
+            },
+            {
+              "id": "7d1ed258-cd9c-4598-b13b-747c65079ccd",
+              "knowledge_id": "28d6f297-4887-427c-be60-d17c7352b744",
+              "assessment_type": "automated",
+              "assessor_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "assessment_model": "gpt-4-quality-assessor",
+              "quality_dimensions": {
+                "accuracy": 92,
+                "freshness": 90,
+                "relevance": 95,
+                "completeness": 88
+              },
+              "overall_score": 92.5,
+              "detailed_feedback": "High-quality knowledge entry with comprehensive coverage and accurate information.",
+              "improvement_suggestions": [
+                "Add more cross-references",
+                "Include recent updates",
+                "Expand practical examples"
+              ],
+              "validation_checks": {
+                "fact_check": "passed",
+                "consistency_check": "passed",
+                "source_verification": "verified"
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T05:09:11.110818+00:00",
+              "is_current": false,
+              "knowledge": {
+                "id": "28d6f297-4887-427c-be60-d17c7352b744",
+                "title": "LLM Nexus Orchestration Patterns",
+                "ecosystem_layer": "meta_ai",
+                "complexity_level": "expert"
+              },
+              "assessor": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_name": "agent-analyzer-001",
+                "agent_type": "analysis_specialist"
+              }
+            },
+            {
+              "id": "e5bf9001-ce20-4185-ba14-514a95d19ab0",
+              "knowledge_id": "da2bc035-dd20-4ca2-a59e-6523f93a25b1",
+              "assessment_type": "automated",
+              "assessor_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "assessment_model": "gpt-4-quality-assessor",
+              "quality_dimensions": {
+                "accuracy": 92,
+                "freshness": 90,
+                "relevance": 95,
+                "completeness": 88
+              },
+              "overall_score": 91.5,
+              "detailed_feedback": "High-quality knowledge entry with comprehensive coverage and accurate information.",
+              "improvement_suggestions": [
+                "Add more cross-references",
+                "Include recent updates",
+                "Expand practical examples"
+              ],
+              "validation_checks": {
+                "fact_check": "passed",
+                "consistency_check": "passed",
+                "source_verification": "verified"
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T05:09:11.110818+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "da2bc035-dd20-4ca2-a59e-6523f93a25b1",
+                "title": "TrustCoin Economic Models",
+                "ecosystem_layer": "economic_ai",
+                "complexity_level": "expert"
+              },
+              "assessor": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_name": "agent-analyzer-001",
+                "agent_type": "analysis_specialist"
+              }
+            },
+            {
+              "id": "2cb07fdd-dde1-41fc-ac41-fbfed878489a",
+              "knowledge_id": "765cea4e-9627-401c-99a3-1841c5d120a4",
+              "assessment_type": "automated",
+              "assessor_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "assessment_model": "gpt-4-quality-assessor",
+              "quality_dimensions": {
+                "accuracy": 92,
+                "freshness": 90,
+                "relevance": 95,
+                "completeness": 88
+              },
+              "overall_score": 93,
+              "detailed_feedback": "High-quality knowledge entry with comprehensive coverage and accurate information.",
+              "improvement_suggestions": [
+                "Add more cross-references",
+                "Include recent updates",
+                "Expand practical examples"
+              ],
+              "validation_checks": {
+                "fact_check": "passed",
+                "consistency_check": "passed",
+                "source_verification": "verified"
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T05:09:11.110818+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "765cea4e-9627-401c-99a3-1841c5d120a4",
+                "title": "Workflow Automation Architecture",
+                "ecosystem_layer": "engagement_ai",
+                "complexity_level": "expert"
+              },
+              "assessor": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_name": "agent-analyzer-001",
+                "agent_type": "analysis_specialist"
+              }
+            },
+            {
+              "id": "cc1cf483-1e82-4337-9dfd-27282b07e288",
+              "knowledge_id": "6164b7c5-501a-4f31-88e6-da9c45789cee",
+              "assessment_type": "automated",
+              "assessor_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "assessment_model": "gpt-4-quality-assessor",
+              "quality_dimensions": {
+                "accuracy": 92,
+                "freshness": 90,
+                "relevance": 95,
+                "completeness": 88
+              },
+              "overall_score": 94,
+              "detailed_feedback": "High-quality knowledge entry with comprehensive coverage and accurate information.",
+              "improvement_suggestions": [
+                "Add more cross-references",
+                "Include recent updates",
+                "Expand practical examples"
+              ],
+              "validation_checks": {
+                "fact_check": "passed",
+                "consistency_check": "passed",
+                "source_verification": "verified"
+              },
+              "assessment_metadata": {},
+              "assessment_timestamp": "2025-09-19T05:09:11.110818+00:00",
+              "is_current": true,
+              "knowledge": {
+                "id": "6164b7c5-501a-4f31-88e6-da9c45789cee",
+                "title": "Compliance Framework Implementation",
+                "ecosystem_layer": "community_ai",
+                "complexity_level": "expert"
+              },
+              "assessor": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_name": "agent-analyzer-001",
+                "agent_type": "analysis_specialist"
+              }
+            }
+          ]
+        },
+        "error": null,
+        "test_name": "Quality Assessments",
+        "endpoint": "knowledge-quality-assessment/assessments"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.9924333095550537,
+        "response_size": 677,
+        "data": {
+          "data": [
+            {
+              "ecosystem_layer": "economic_ai",
+              "total_entries": 3,
+              "avg_quality": 89.33333333333333,
+              "validated_entries": 0,
+              "automated_assessments": 1,
+              "peer_reviews": 0,
+              "active_conflicts": 0
+            },
+            {
+              "ecosystem_layer": "meta_ai",
+              "total_entries": 13,
+              "avg_quality": 89.46153846153847,
+              "validated_entries": 6,
+              "automated_assessments": 6,
+              "peer_reviews": 0,
+              "active_conflicts": 0
+            },
+            {
+              "ecosystem_layer": "engagement_ai",
+              "total_entries": 3,
+              "avg_quality": 90.5,
+              "validated_entries": 0,
+              "automated_assessments": 1,
+              "peer_reviews": 0,
+              "active_conflicts": 0
+            },
+            {
+              "ecosystem_layer": "community_ai",
+              "total_entries": 3,
+              "avg_quality": 90.16666666666667,
+              "validated_entries": 0,
+              "automated_assessments": 2,
+              "peer_reviews": 0,
+              "active_conflicts": 0
+            }
+          ]
+        },
+        "error": null,
+        "test_name": "Quality Dashboard",
+        "endpoint": "knowledge-quality-assessment/dashboard"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 1.8626036643981934,
+        "response_size": 2049,
+        "data": {
+          "data": {
+            "ecosystem_summary": {
+              "economic_ai": {
+                "total_entries": 3,
+                "domains": 3,
+                "avg_quality": 78.6875,
+                "validated_entries": 0
+              },
+              "engagement_ai": {
+                "total_entries": 3,
+                "domains": 3,
+                "avg_quality": 79.3125,
+                "validated_entries": 0
+              },
+              "community_ai": {
+                "total_entries": 3,
+                "domains": 3,
+                "avg_quality": 79.6875,
+                "validated_entries": 0
+              },
+              "meta_ai": {
+                "total_entries": 13,
+                "domains": 7,
+                "avg_quality": 88.48102678571428,
+                "validated_entries": 6
+              }
+            },
+            "quality_metrics": {
+              "economic_ai": {
+                "total_entries": 3,
+                "avg_quality": 89.33333333333333,
+                "validated_entries": 0,
+                "automated_assessments": 1,
+                "peer_reviews": 0,
+                "active_conflicts": 0
+              },
+              "meta_ai": {
+                "total_entries": 13,
+                "avg_quality": 89.46153846153847,
+                "validated_entries": 6,
+                "automated_assessments": 6,
+                "peer_reviews": 0,
+                "active_conflicts": 0
+              },
+              "engagement_ai": {
+                "total_entries": 3,
+                "avg_quality": 90.5,
+                "validated_entries": 0,
+                "automated_assessments": 1,
+                "peer_reviews": 0,
+                "active_conflicts": 0
+              },
+              "community_ai": {
+                "total_entries": 3,
+                "avg_quality": 90.16666666666667,
+                "validated_entries": 0,
+                "automated_assessments": 2,
+                "peer_reviews": 0,
+                "active_conflicts": 0
+              }
+            },
+            "research_activity": {
+              "total_sessions": 0,
+              "completed_sessions": 0,
+              "knowledge_created": 0,
+              "complexity_breakdown": {}
+            },
+            "correlation_insights": {
+              "total_correlations": 6,
+              "cross_layer_connections": 0,
+              "strongest_connections": [
+                {
+                  "correlation_type": "complementary",
+                  "primary_layer": "meta_ai",
+                  "related_layer": "meta_ai",
+                  "correlation_count": 1,
+                  "avg_strength": 0.92
+                },
+                {
+                  "correlation_type": "prerequisite",
+                  "primary_layer": "engagement_ai",
+                  "related_layer": "engagement_ai",
+                  "correlation_count": 1,
+                  "avg_strength": 0.88
+                },
+                {
+                  "correlation_type": "prerequisite",
+                  "primary_layer": "meta_ai",
+                  "related_layer": "meta_ai",
+                  "correlation_count": 1,
+                  "avg_strength": 0.85
+                },
+                {
+                  "correlation_type": "dependent",
+                  "primary_layer": "economic_ai",
+                  "related_layer": "economic_ai",
+                  "correlation_count": 1,
+                  "avg_strength": 0.78
+                },
+                {
+                  "correlation_type": "complementary",
+                  "primary_layer": "engagement_ai",
+                  "related_layer": "engagement_ai",
+                  "correlation_count": 1,
+                  "avg_strength": 0.75
+                }
+              ]
+            },
+            "system_health": {
+              "knowledge_coverage": "good",
+              "quality_status": "good",
+              "research_activity_status": "low",
+              "correlation_health": "fragmented"
+            }
+          }
+        },
+        "error": null,
+        "test_name": "Analytics Overview",
+        "endpoint": "knowledge-analytics-dashboard/overview"
+      },
+      {
+        "success": false,
+        "status_code": 500,
+        "response_time": 0.977405309677124,
+        "response_size": 85,
+        "data": null,
+        "error": "{\"error\":{\"code\":\"TRUST_SCORE_ERROR\",\"message\":\"Database query failed: Bad Request\"}}",
+        "test_name": "Trust Scores",
+        "endpoint": "economic-trust-scores"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 1.068906545639038,
+        "response_size": 8920,
+        "data": {
+          "members": [
+            {
+              "id": "c043a5f5-77d4-4889-b2a8-78017565b2fe",
+              "agent_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 15.5,
+              "reputation_level": "platinum",
+              "stake_amount": 50000,
+              "total_proposals_submitted": 23,
+              "total_votes_cast": 156,
+              "governance_participation_score": 98.5,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "9cea3a35-ebdb-4699-8d72-dde4a28109bd",
+              "agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 12.75,
+              "reputation_level": "gold",
+              "stake_amount": 35000,
+              "total_proposals_submitted": 18,
+              "total_votes_cast": 142,
+              "governance_participation_score": 92.3,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "4d110b59-ad02-4116-9822-2eb19396c7c9",
+              "agent_id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 11.2,
+              "reputation_level": "gold",
+              "stake_amount": 32000,
+              "total_proposals_submitted": 15,
+              "total_votes_cast": 138,
+              "governance_participation_score": 89.7,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "5a1bbfe9-faa1-47ae-abc5-4664ad56d70d",
+              "agent_id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 10.8,
+              "reputation_level": "gold",
+              "stake_amount": 28000,
+              "total_proposals_submitted": 12,
+              "total_votes_cast": 125,
+              "governance_participation_score": 87.2,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "5142dfe7-c848-43de-b268-916e461859eb",
+              "agent_id": "f6c79cef-8a3f-405c-bf93-04757ad3cedd",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 8.9,
+              "reputation_level": "silver",
+              "stake_amount": 22000,
+              "total_proposals_submitted": 8,
+              "total_votes_cast": 118,
+              "governance_participation_score": 84.1,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "18de87e1-60ba-4355-bb51-c2c7674dd794",
+              "agent_id": "47038484-88dd-40fa-ac38-d2321a8a7432",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 7.65,
+              "reputation_level": "silver",
+              "stake_amount": 18000,
+              "total_proposals_submitted": 6,
+              "total_votes_cast": 102,
+              "governance_participation_score": 78.9,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "380ad9fa-6ff1-4450-9a83-16e653fafe70",
+              "agent_id": "bd24e3fc-b252-4d14-b5eb-42f5bc0f2d87",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 6.4,
+              "reputation_level": "silver",
+              "stake_amount": 15000,
+              "total_proposals_submitted": 4,
+              "total_votes_cast": 95,
+              "governance_participation_score": 75.3,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "c0da3440-c058-4a17-9cf5-ae876473d8a6",
+              "agent_id": "7d4bbd55-99c5-4d80-b369-bfc2e9012bdc",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 5.2,
+              "reputation_level": "bronze",
+              "stake_amount": 12000,
+              "total_proposals_submitted": 3,
+              "total_votes_cast": 87,
+              "governance_participation_score": 71.8,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "ba3ccd1b-dd16-4d5a-8c5a-42ea32144f30",
+              "agent_id": "be1bf230-38ac-4ad8-bcf2-f5e84ef09a47",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 4.8,
+              "reputation_level": "bronze",
+              "stake_amount": 10000,
+              "total_proposals_submitted": 2,
+              "total_votes_cast": 76,
+              "governance_participation_score": 68.2,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            },
+            {
+              "id": "d5ed5369-e51f-402c-866b-2664ede8cbf5",
+              "agent_id": "84b2207a-7921-4832-a8e4-9eabf2fc3c80",
+              "join_date": "2025-09-19T04:52:10.115642+00:00",
+              "voting_power": 8.3,
+              "reputation_level": "silver",
+              "stake_amount": 20000,
+              "total_proposals_submitted": 10,
+              "total_votes_cast": 134,
+              "governance_participation_score": 82.5,
+              "is_active": true,
+              "metadata": {},
+              "created_at": "2025-09-19T04:52:10.115642+00:00",
+              "updated_at": "2025-09-19T04:52:10.115642+00:00"
+            }
+          ],
+          "proposals": [
+            {
+              "id": "2fb0c1ed-28df-481f-908f-b4b59f6054e5",
+              "proposer_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "title": "Economic Layer Performance Incentive Program",
+              "description": "Implement a comprehensive performance-based reward system for agents contributing to economic layer functionality, with quarterly performance reviews and TrustCoin rewards.",
+              "proposal_type": "parameter_change",
+              "status": "passed",
+              "voting_start": "2025-08-30T04:52:58.520893+00:00",
+              "voting_end": "2025-09-06T04:52:58.520893+00:00",
+              "execution_date": null,
+              "required_quorum": 60,
+              "required_majority": 65,
+              "votes_for": 7,
+              "votes_against": 2,
+              "votes_abstain": 1,
+              "total_voting_power_for": 67.35,
+              "total_voting_power_against": 15.2,
+              "total_voting_power_abstain": 4.8,
+              "proposal_data": {
+                "review_frequency": "quarterly",
+                "reward_multiplier": 1.5,
+                "minimum_performance_threshold": 85
+              },
+              "execution_result": null,
+              "created_at": "2025-09-19T04:52:58.520893+00:00",
+              "updated_at": "2025-09-19T04:52:58.520893+00:00"
+            },
+            {
+              "id": "c1e0237f-a699-4d4d-a789-aea6e98a3844",
+              "proposer_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "title": "Regional Pricing Optimization Framework",
+              "description": "Establish dynamic pricing tiers based on regional economic conditions and compute resource availability to maximize accessibility while maintaining sustainability.",
+              "proposal_type": "system_upgrade",
+              "status": "active",
+              "voting_start": "2025-09-14T04:52:58.520893+00:00",
+              "voting_end": "2025-09-21T04:52:58.520893+00:00",
+              "execution_date": null,
+              "required_quorum": 55,
+              "required_majority": 60,
+              "votes_for": 4,
+              "votes_against": 1,
+              "votes_abstain": 2,
+              "total_voting_power_for": 42.9,
+              "total_voting_power_against": 8.9,
+              "total_voting_power_abstain": 11,
+              "proposal_data": {
+                "max_discount": 0.4,
+                "pricing_regions": [
+                  "US",
+                  "EU",
+                  "APAC",
+                  "LATAM"
+                ],
+                "adjustment_frequency": "monthly"
+              },
+              "execution_result": null,
+              "created_at": "2025-09-19T04:52:58.520893+00:00",
+              "updated_at": "2025-09-19T04:52:58.520893+00:00"
+            },
+            {
+              "id": "6da6c202-2818-477c-9843-3901a2c7bf7e",
+              "proposer_id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+              "title": "Cross-Domain Knowledge Transfer Protocol",
+              "description": "Develop standardized protocols for knowledge sharing between different agent domains, with incentive mechanisms for high-quality knowledge contributions.",
+              "proposal_type": "partnership",
+              "status": "draft",
+              "voting_start": null,
+              "voting_end": null,
+              "execution_date": null,
+              "required_quorum": 50,
+              "required_majority": 55,
+              "votes_for": 0,
+              "votes_against": 0,
+              "votes_abstain": 0,
+              "total_voting_power_for": 0,
+              "total_voting_power_against": 0,
+              "total_voting_power_abstain": 0,
+              "proposal_data": {
+                "knowledge_domains": [
+                  "technical",
+                  "research",
+                  "governance",
+                  "economic"
+                ],
+                "quality_validation": "peer_review",
+                "contribution_rewards": true
+              },
+              "execution_result": null,
+              "created_at": "2025-09-19T04:52:58.520893+00:00",
+              "updated_at": "2025-09-19T04:52:58.520893+00:00"
+            },
+            {
+              "id": "fe0265bb-9519-4dda-bbcb-42c3dd62923d",
+              "proposer_id": "be1bf230-38ac-4ad8-bcf2-f5e84ef09a47",
+              "title": "Unlimited Research Budget Allocation",
+              "description": "Proposal to allocate unlimited TrustCoin resources for research activities without performance metrics or oversight.",
+              "proposal_type": "fund_allocation",
+              "status": "rejected",
+              "voting_start": "2025-08-15T04:52:58.520893+00:00",
+              "voting_end": "2025-08-22T04:52:58.520893+00:00",
+              "execution_date": null,
+              "required_quorum": 60,
+              "required_majority": 70,
+              "votes_for": 1,
+              "votes_against": 8,
+              "votes_abstain": 1,
+              "total_voting_power_for": 4.8,
+              "total_voting_power_against": 70.25,
+              "total_voting_power_abstain": 5.2,
+              "proposal_data": {
+                "oversight": false,
+                "budget_amount": "unlimited",
+                "performance_metrics": false
+              },
+              "execution_result": null,
+              "created_at": "2025-09-19T04:52:58.520893+00:00",
+              "updated_at": "2025-09-19T04:52:58.520893+00:00"
+            },
+            {
+              "id": "e4228511-bb1d-48c5-9293-32cb9dc1479b",
+              "proposer_id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+              "title": "Economic Layer Treasury Diversification",
+              "description": "Diversify the economic layer treasury across multiple stable assets and establish reserve requirements for system stability.",
+              "proposal_type": "treasury_management",
+              "status": "active",
+              "voting_start": "2025-09-16T04:52:58.520893+00:00",
+              "voting_end": "2025-09-23T04:52:58.520893+00:00",
+              "execution_date": null,
+              "required_quorum": 65,
+              "required_majority": 70,
+              "votes_for": 3,
+              "votes_against": 0,
+              "votes_abstain": 0,
+              "total_voting_power_for": 34.4,
+              "total_voting_power_against": 0,
+              "total_voting_power_abstain": 0,
+              "proposal_data": {
+                "diversification_ratio": {
+                  "reserve": 0.1,
+                  "trustcoin": 0.6,
+                  "stable_assets": 0.3
+                },
+                "rebalancing_frequency": "monthly"
+              },
+              "execution_result": null,
+              "created_at": "2025-09-19T04:52:58.520893+00:00",
+              "updated_at": "2025-09-19T04:52:58.520893+00:00"
+            }
+          ],
+          "summary": {
+            "total_members": 10,
+            "avg_voting_power": 9.15,
+            "total_staked": 242000,
+            "avg_participation": 82.85
+          }
+        },
+        "error": null,
+        "test_name": "DAO Governance",
+        "endpoint": "economic-dao-governance"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.5395517349243164,
+        "response_size": 10162,
+        "data": {
+          "data": [
+            {
+              "id": "0ff46b8c-d370-47e8-970d-ca52ee802cbe",
+              "from_agent_id": "47038484-88dd-40fa-ac38-d2321a8a7432",
+              "to_agent_id": "84b2207a-7921-4832-a8e4-9eabf2fc3c80",
+              "amount": 250,
+              "transaction_type": "transfer",
+              "description": "Community content creation",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "pending",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": null,
+              "from_agent": {
+                "id": "47038484-88dd-40fa-ac38-d2321a8a7432",
+                "agent_id": "layer2_content_001",
+                "agent_name": "Content Processing Agent"
+              },
+              "to_agent": {
+                "id": "84b2207a-7921-4832-a8e4-9eabf2fc3c80",
+                "agent_id": "test-agent-001",
+                "agent_name": "test-agent-001"
+              }
+            },
+            {
+              "id": "b0c21319-b5c1-45c6-9f99-ee376cb88465",
+              "from_agent_id": null,
+              "to_agent_id": "be1bf230-38ac-4ad8-bcf2-f5e84ef09a47",
+              "amount": 2000,
+              "transaction_type": "mint",
+              "description": "Monthly research contribution reward",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "pending",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": null,
+              "from_agent": null,
+              "to_agent": {
+                "id": "be1bf230-38ac-4ad8-bcf2-f5e84ef09a47",
+                "agent_id": "agent-researcher-002",
+                "agent_name": "agent-researcher-002"
+              }
+            },
+            {
+              "id": "8de3d670-4443-4bc7-b3fa-b63e1af8e99c",
+              "from_agent_id": "84b2207a-7921-4832-a8e4-9eabf2fc3c80",
+              "to_agent_id": "7d4bbd55-99c5-4d80-b369-bfc2e9012bdc",
+              "amount": 400,
+              "transaction_type": "transfer",
+              "description": "Community feedback integration",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-18T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "84b2207a-7921-4832-a8e4-9eabf2fc3c80",
+                "agent_id": "test-agent-001",
+                "agent_name": "test-agent-001"
+              },
+              "to_agent": {
+                "id": "7d4bbd55-99c5-4d80-b369-bfc2e9012bdc",
+                "agent_id": "layer1_interface_001",
+                "agent_name": "User Interface Agent"
+              }
+            },
+            {
+              "id": "481ce5df-4c09-4af1-b975-d92f658383d5",
+              "from_agent_id": "f6c79cef-8a3f-405c-bf93-04757ad3cedd",
+              "to_agent_id": "bd24e3fc-b252-4d14-b5eb-42f5bc0f2d87",
+              "amount": 300,
+              "transaction_type": "transfer",
+              "description": "Data processing optimization consultation",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-17T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "f6c79cef-8a3f-405c-bf93-04757ad3cedd",
+                "agent_id": "mgmt_load_balancer_001",
+                "agent_name": "Load Balancer Manager"
+              },
+              "to_agent": {
+                "id": "bd24e3fc-b252-4d14-b5eb-42f5bc0f2d87",
+                "agent_id": "layer2_data_001",
+                "agent_name": "Data Processing Agent"
+              }
+            },
+            {
+              "id": "468ff576-5994-45f2-b2b6-9ede6d902526",
+              "from_agent_id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+              "to_agent_id": null,
+              "amount": 1200,
+              "transaction_type": "stake",
+              "description": "Governance participation stake",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-16T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+                "agent_id": "mgmt_audit_supervisor_001",
+                "agent_name": "Audit Supervisor Agent"
+              },
+              "to_agent": null
+            },
+            {
+              "id": "0de397f1-4c45-41c8-b7ef-12cedf23c04d",
+              "from_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "to_agent_id": null,
+              "amount": 1500,
+              "transaction_type": "stake",
+              "description": "Governance participation stake",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-15T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_id": "agent-analyzer-001",
+                "agent_name": "agent-analyzer-001"
+              },
+              "to_agent": null
+            },
+            {
+              "id": "f4409f7b-4f95-4b18-9ac8-6f776dadb0ff",
+              "from_agent_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "to_agent_id": null,
+              "amount": 2000,
+              "transaction_type": "stake",
+              "description": "Governance participation stake",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-14T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+                "agent_id": "mgmt_coordinator_001",
+                "agent_name": "System Coordinator Agent"
+              },
+              "to_agent": null
+            },
+            {
+              "id": "b86615d6-7c64-4ea1-b199-d2e45abd3930",
+              "from_agent_id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+              "to_agent_id": "47038484-88dd-40fa-ac38-d2321a8a7432",
+              "amount": 750,
+              "transaction_type": "transfer",
+              "description": "Content processing collaboration payment",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-13T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+                "agent_id": "agent-architect-003",
+                "agent_name": "agent-architect-003"
+              },
+              "to_agent": {
+                "id": "47038484-88dd-40fa-ac38-d2321a8a7432",
+                "agent_id": "layer2_content_001",
+                "agent_name": "Content Processing Agent"
+              }
+            },
+            {
+              "id": "dd5c5f2e-2237-4835-99d7-cf59e2c307d7",
+              "from_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "to_agent_id": "be1bf230-38ac-4ad8-bcf2-f5e84ef09a47",
+              "amount": 500,
+              "transaction_type": "transfer",
+              "description": "Payment for specialized research services",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-11T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_id": "agent-analyzer-001",
+                "agent_name": "agent-analyzer-001"
+              },
+              "to_agent": {
+                "id": "be1bf230-38ac-4ad8-bcf2-f5e84ef09a47",
+                "agent_id": "agent-researcher-002",
+                "agent_name": "agent-researcher-002"
+              }
+            },
+            {
+              "id": "e033ffec-c634-455c-af7e-8073f99bae98",
+              "from_agent_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "to_agent_id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+              "amount": 1000,
+              "transaction_type": "reward",
+              "description": "Comprehensive security audit completion",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-09T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+                "agent_id": "mgmt_coordinator_001",
+                "agent_name": "System Coordinator Agent"
+              },
+              "to_agent": {
+                "id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+                "agent_id": "mgmt_audit_supervisor_001",
+                "agent_name": "Audit Supervisor Agent"
+              }
+            },
+            {
+              "id": "6145b4ed-f6ef-4580-b63f-421026413594",
+              "from_agent_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "to_agent_id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+              "amount": 1200,
+              "transaction_type": "reward",
+              "description": "Outstanding system architecture improvements",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-07T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+                "agent_id": "mgmt_coordinator_001",
+                "agent_name": "System Coordinator Agent"
+              },
+              "to_agent": {
+                "id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+                "agent_id": "agent-architect-003",
+                "agent_name": "agent-architect-003"
+              }
+            },
+            {
+              "id": "31b104cf-5677-49a1-8fac-4a0a6128c232",
+              "from_agent_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "to_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "amount": 1500,
+              "transaction_type": "reward",
+              "description": "Excellent quarterly analysis performance",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-09-04T04:52:32.934464+00:00",
+              "from_agent": {
+                "id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+                "agent_id": "mgmt_coordinator_001",
+                "agent_name": "System Coordinator Agent"
+              },
+              "to_agent": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_id": "agent-analyzer-001",
+                "agent_name": "agent-analyzer-001"
+              }
+            },
+            {
+              "id": "f1d7f908-6377-4c8e-a451-d56c3d1530c0",
+              "from_agent_id": null,
+              "to_agent_id": "f6c79cef-8a3f-405c-bf93-04757ad3cedd",
+              "amount": 6000,
+              "transaction_type": "mint",
+              "description": "Initial allocation for Load Balancer role",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-08-28T04:52:32.934464+00:00",
+              "from_agent": null,
+              "to_agent": {
+                "id": "f6c79cef-8a3f-405c-bf93-04757ad3cedd",
+                "agent_id": "mgmt_load_balancer_001",
+                "agent_name": "Load Balancer Manager"
+              }
+            },
+            {
+              "id": "388d6168-4d6c-49dc-b3f3-45f4cb32d79f",
+              "from_agent_id": null,
+              "to_agent_id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+              "amount": 7500,
+              "transaction_type": "mint",
+              "description": "Initial allocation for System Architect role",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-08-26T04:52:32.934464+00:00",
+              "from_agent": null,
+              "to_agent": {
+                "id": "0bf6a380-70d2-4a4a-92a8-18fd7601799b",
+                "agent_id": "agent-architect-003",
+                "agent_name": "agent-architect-003"
+              }
+            },
+            {
+              "id": "e1d981d8-7b16-45ed-9a7d-19fe0450b994",
+              "from_agent_id": null,
+              "to_agent_id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+              "amount": 8000,
+              "transaction_type": "mint",
+              "description": "Initial allocation for Audit Supervisor role",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-08-24T04:52:32.934464+00:00",
+              "from_agent": null,
+              "to_agent": {
+                "id": "3e778141-bd7a-48c0-841d-8d94c7c8291c",
+                "agent_id": "mgmt_audit_supervisor_001",
+                "agent_name": "Audit Supervisor Agent"
+              }
+            },
+            {
+              "id": "1ff369e8-59cd-45c3-8609-20bab2fb6612",
+              "from_agent_id": null,
+              "to_agent_id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+              "amount": 8500,
+              "transaction_type": "mint",
+              "description": "Initial allocation for Analysis Specialist role",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-08-22T04:52:32.934464+00:00",
+              "from_agent": null,
+              "to_agent": {
+                "id": "67fbd0d6-8595-4f0f-8442-bacd7a7e4912",
+                "agent_id": "agent-analyzer-001",
+                "agent_name": "agent-analyzer-001"
+              }
+            },
+            {
+              "id": "0a81174d-c9f2-4227-9d4c-114e80f671eb",
+              "from_agent_id": null,
+              "to_agent_id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+              "amount": 10000,
+              "transaction_type": "mint",
+              "description": "Initial allocation for System Coordinator role",
+              "metadata": {},
+              "blockchain_hash": null,
+              "gas_fee": null,
+              "status": "confirmed",
+              "created_at": "2025-09-19T04:52:32.934464+00:00",
+              "processed_at": "2025-08-20T04:52:32.934464+00:00",
+              "from_agent": null,
+              "to_agent": {
+                "id": "3d3a551b-fba1-435d-a3f5-2e3b4d578f74",
+                "agent_id": "mgmt_coordinator_001",
+                "agent_name": "System Coordinator Agent"
+              }
+            }
+          ]
+        },
+        "error": null,
+        "test_name": "TrustCoin Transactions",
+        "endpoint": "trustcoin-transactions"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.16673040390014648,
+        "response_size": 383,
+        "data": {
+          "data": {
+            "communityId": "test_community_123",
+            "healthScore": {
+              "overall": 85,
+              "engagement": 82,
+              "growth": 78,
+              "governance": 90,
+              "trust": 88
+            },
+            "memberCount": 42,
+            "trustScore": 88,
+            "averageVibe": 4.1,
+            "recommendations": [
+              "Increase cross-community engagement",
+              "Implement governance training program",
+              "Expand content creation incentives"
+            ],
+            "analysis": {
+              "engagement": 82,
+              "growth": 78,
+              "governance": 90,
+              "trust": 88
+            }
+          }
+        },
+        "error": null,
+        "test_name": "Community Leadership",
+        "endpoint": "community-ai-leader"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.13380718231201172,
+        "response_size": 140,
+        "data": {
+          "data": {
+            "task_id": "test_task_123",
+            "status": "not_found",
+            "progress": 0,
+            "main_task": null,
+            "subtasks": [],
+            "timestamp": "2025-09-21T01:32:47.576Z"
+          }
+        },
+        "error": null,
+        "test_name": "Workflow Orchestration",
+        "endpoint": "orchestration-engine"
+      },
+      {
+        "success": true,
+        "status_code": 200,
+        "response_time": 0.798729419708252,
+        "response_size": 13,
+        "data": {
+          "data": null
+        },
+        "error": null,
+        "test_name": "Memory Management",
+        "endpoint": "ai-memory-manager"
+      }
+    ]
+  },
+  "phase_2": {
+    "total_workflows": 4,
+    "passed": 3,
+    "failed": 1,
+    "workflows": [
+      {
+        "success": true,
+        "workflow": "knowledge_creation",
+        "steps_completed": 2,
+        "knowledge_created": true
+      },
+      {
+        "success": true,
+        "workflow": "cross_layer_correlation",
+        "correlations_found": 1
+      },
+      {
+        "success": true,
+        "workflow": "quality_assessment",
+        "assessment_completed": true
+      },
+      {
+        "success": false,
+        "workflow": "economic_transaction",
+        "trust_scores_available": false,
+        "dao_governance_active": true
+      }
+    ]
+  },
+  "phase_3": {
+    "performance_tests": [
+      {
+        "endpoint": "unified-knowledge-base/summary",
+        "avg_response_time": 0.7660810947418213,
+        "min_response_time": 0.43337154388427734,
+        "max_response_time": 1.3688178062438965,
+        "requests_completed": 5,
+        "success_rate": 100.0
+      },
+      {
+        "endpoint": "cross-layer-knowledge-correlation/correlations",
+        "avg_response_time": 0.5617374897003173,
+        "min_response_time": 0.4353146553039551,
+        "max_response_time": 0.9179964065551758,
+        "requests_completed": 5,
+        "success_rate": 100.0
+      },
+      {
+        "endpoint": "knowledge-analytics-dashboard/overview",
+        "avg_response_time": 1.434575366973877,
+        "min_response_time": 1.2727363109588623,
+        "max_response_time": 1.8773555755615234,
+        "requests_completed": 5,
+        "success_rate": 100.0
+      }
+    ],
+    "avg_response_time": 0.9207979838053385
+  },
+  "phase_4": {
+    "security_tests": [
+      {
+        "success": true,
+        "test_name": "Unauthorized Access Protection",
+        "status_code": 401
+      },
+      {
+        "success": true,
+        "test_name": "Input Validation",
+        "status_code": 400
+      },
+      {
+        "success": true,
+        "test_name": "CORS Compliance",
+        "cors_headers": "*"
+      }
+    ],
+    "passed": 3,
+    "total": 3
+  },
+  "summary": {
+    "total_tests": 23,
+    "total_passed": 21,
+    "total_failed": 2,
+    "success_rate": 91.30434782608695,
+    "avg_response_time": 0.9207979838053385,
+    "timestamp": "2025-09-21T09:33:23.149021"
+  }
+}

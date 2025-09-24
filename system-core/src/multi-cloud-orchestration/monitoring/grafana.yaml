@@ -1,0 +1,360 @@
+# Grafana Configuration for Multi-Cloud Dashboards
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      serviceAccountName: grafana
+      securityContext:
+        fsGroup: 472
+        runAsGroup: 472
+        runAsUser: 472
+      containers:
+      - name: grafana
+        image: grafana/grafana:10.2.0
+        ports:
+        - containerPort: 3000
+          name: http-grafana
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /robots.txt
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 2
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 3000
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 250m
+            memory: 750Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: grafana-pv
+        - mountPath: /etc/grafana/provisioning/datasources
+          name: grafana-datasources
+          readOnly: false
+        - mountPath: /etc/grafana/provisioning/dashboards
+          name: grafana-dashboards
+          readOnly: false
+        - mountPath: /etc/grafana/dashboards
+          name: grafana-dashboard-configs
+          readOnly: false
+        env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: admin
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: grafana-admin-credentials
+              key: password
+        - name: GF_USERS_ALLOW_SIGN_UP
+          value: "false"
+        - name: GF_INSTALL_PLUGINS
+          value: "grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel"
+      volumes:
+      - name: grafana-pv
+        persistentVolumeClaim:
+          claimName: grafana-pvc
+      - name: grafana-datasources
+        configMap:
+          defaultMode: 420
+          name: grafana-datasources
+      - name: grafana-dashboards
+        configMap:
+          defaultMode: 420
+          name: grafana-dashboards
+      - name: grafana-dashboard-configs
+        configMap:
+          defaultMode: 420
+          name: grafana-dashboard-configs
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grafana
+  namespace: monitoring
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+  namespace: monitoring
+spec:
+  storageClassName: fast-ssd
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-admin-credentials
+  namespace: monitoring
+type: Opaque
+stringData:
+  password: "${GRAFANA_ADMIN_PASSWORD}"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+data:
+  prometheus.yaml: |-
+    {
+        "apiVersion": 1,
+        "datasources": [
+            {
+               "access":"proxy",
+                "editable": true,
+                "name": "prometheus",
+                "orgId": 1,
+                "type": "prometheus",
+                "url": "http://prometheus.monitoring.svc.cluster.local:9090",
+                "version": 1
+            },
+            {
+               "access":"proxy",
+                "editable": true,
+                "name": "jaeger",
+                "orgId": 1,
+                "type": "jaeger",
+                "url": "http://jaeger-query.tracing.svc.cluster.local:16686",
+                "version": 1
+            }
+        ]
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  default.yaml: |-
+    {
+        "apiVersion": 1,
+        "providers": [
+            {
+                "folder": "Multi-Cloud",
+                "name": "0",
+                "options": {
+                    "path": "/etc/grafana/dashboards"
+                },
+                "orgId": 1,
+                "type": "file"
+            }
+        ]
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-configs
+  namespace: monitoring
+data:
+  multi-cloud-overview.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "Multi-Cloud Overview",
+        "tags": ["multi-cloud", "trustram"],
+        "style": "dark",
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Cluster Health Status",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "up{job=~\".*-cluster-prometheus\"}",
+                "format": "time_series",
+                "legendFormat": "{{cluster}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "Cross-Cluster Request Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(istio_requests_total{source_cluster!=destination_cluster}[5m])) by (source_cluster, destination_cluster)",
+                "format": "time_series",
+                "legendFormat": "{{source_cluster}} -> {{destination_cluster}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+          },
+          {
+            "id": 3,
+            "title": "Error Rate by Cluster",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(istio_requests_total{response_code!~\"2..\"}[5m])) by (cluster) / sum(rate(istio_requests_total[5m])) by (cluster)",
+                "format": "time_series",
+                "legendFormat": "{{cluster}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+          },
+          {
+            "id": 4,
+            "title": "Latency P99 by Service",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.99, sum(rate(istio_request_duration_milliseconds_bucket[5m])) by (cluster, destination_service_name, le))",
+                "format": "time_series",
+                "legendFormat": "{{cluster}}/{{destination_service_name}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+          }
+        ],
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "refresh": "30s"
+      }
+    }
+  
+  cost-optimization.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "Cost Optimization Dashboard",
+        "tags": ["cost", "optimization", "trustram"],
+        "style": "dark",
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Cost per Cluster (USD/hour)",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "sum(cost_optimization_cluster_cost_per_hour) by (cluster)",
+                "format": "time_series",
+                "legendFormat": "{{cluster}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+          },
+          {
+            "id": 2,
+            "title": "Resource Utilization by Cluster",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "avg(100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)) by (cluster)",
+                "format": "time_series",
+                "legendFormat": "CPU {{cluster}}"
+              },
+              {
+                "expr": "avg((1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100) by (cluster)",
+                "format": "time_series",
+                "legendFormat": "Memory {{cluster}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 16, "x": 8, "y": 0}
+          },
+          {
+            "id": 3,
+            "title": "Savings from Optimization",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(cost_optimization_savings_per_hour) by (cluster)",
+                "format": "time_series",
+                "legendFormat": "{{cluster}}"
+              }
+            ],
+            "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+          }
+        ],
+        "time": {
+          "from": "now-24h",
+          "to": "now"
+        },
+        "refresh": "5m"
+      }
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: http-grafana
+  selector:
+    app: grafana
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: istio
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - grafana.trustram.local
+    secretName: grafana-tls
+  rules:
+  - host: grafana.trustram.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000

@@ -1,0 +1,437 @@
+# Azure Cluster Template for Multi-Cloud Orchestration
+# This defines the complete cluster configuration for Azure
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: trustram-azure-cluster
+  namespace: default
+  labels:
+    cluster.x-k8s.io/cluster-name: trustram-azure-cluster
+    environment: production
+    cloud-provider: azure
+    trustram-version: v4.4
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+    serviceDomain: cluster.local
+  
+  # Infrastructure Reference
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: AzureCluster
+    name: trustram-azure-cluster
+  
+  # Control Plane Configuration
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: trustram-azure-control-plane
+
+---
+# Azure Infrastructure Cluster
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureCluster
+metadata:
+  name: trustram-azure-cluster
+  namespace: default
+spec:
+  # Azure Location
+  location: "West US 2"
+  
+  # Resource Group
+  resourceGroup: "trustram-v44-rg"
+  
+  # Subscription ID
+  subscriptionID: "YOUR_SUBSCRIPTION_ID"  # Replace with actual subscription ID
+  
+  # Virtual Network Configuration
+  networkSpec:
+    vnet:
+      name: "trustram-vnet"
+      cidrBlocks:
+      - "10.1.0.0/16"
+      tags:
+        Name: "trustram-azure-vnet"
+        Environment: "production"
+        Project: "multi-cloud-orchestration"
+        "kubernetes.io/cluster/trustram-azure-cluster": "owned"
+    
+    # Subnet Configuration for High Availability
+    subnets:
+    - name: "trustram-control-plane-subnet"
+      cidrBlocks:
+      - "10.1.0.0/24"
+      role: "control-plane"
+      securityGroup:
+        name: "trustram-controlplane-nsg"
+    - name: "trustram-node-subnet"
+      cidrBlocks:
+      - "10.1.1.0/24"
+      role: "node"
+      securityGroup:
+        name: "trustram-node-nsg"
+    - name: "trustram-internal-lb-subnet"
+      cidrBlocks:
+      - "10.1.2.0/24"
+      role: "internal-lb"
+      securityGroup:
+        name: "trustram-lb-nsg"
+  
+  # API Server Load Balancer Configuration
+  apiServerLB:
+    name: "trustram-api-lb"
+    sku: "Standard"
+    type: "Public"
+    frontendIPs:
+    - name: "trustram-api-frontend"
+      publicIP:
+        name: "trustram-api-ip"
+        dnsName: "trustram-azure-api-${RANDOM_SUFFIX}"
+  
+  # Network Security Groups
+  networkSecurityGroups:
+    controlplane:
+      name: "trustram-controlplane-nsg"
+      securityRules:
+      - name: "allow-apiserver"
+        protocol: "Tcp"
+        direction: "Inbound"
+        priority: 100
+        sourceAddressPrefix: "*"
+        sourcePortRange: "*"
+        destinationAddressPrefix: "*"
+        destinationPortRange: "6443"
+        access: "Allow"
+      - name: "allow-ssh"
+        protocol: "Tcp"
+        direction: "Inbound"
+        priority: 200
+        sourceAddressPrefix: "*"
+        sourcePortRange: "*"
+        destinationAddressPrefix: "*"
+        destinationPortRange: "22"
+        access: "Allow"
+      - name: "allow-etcd"
+        protocol: "Tcp"
+        direction: "Inbound"
+        priority: 300
+        sourceAddressPrefix: "10.1.0.0/24"
+        sourcePortRange: "*"
+        destinationAddressPrefix: "*"
+        destinationPortRange: "2379-2380"
+        access: "Allow"
+    node:
+      name: "trustram-node-nsg"
+      securityRules:
+      - name: "allow-kubelet"
+        protocol: "Tcp"
+        direction: "Inbound"
+        priority: 100
+        sourceAddressPrefix: "10.1.0.0/16"
+        sourcePortRange: "*"
+        destinationAddressPrefix: "*"
+        destinationPortRange: "10250"
+        access: "Allow"
+      - name: "allow-nodeport"
+        protocol: "Tcp"
+        direction: "Inbound"
+        priority: 200
+        sourceAddressPrefix: "*"
+        sourcePortRange: "*"
+        destinationAddressPrefix: "*"
+        destinationPortRange: "30000-32767"
+        access: "Allow"
+      - name: "allow-calico-bgp"
+        protocol: "Tcp"
+        direction: "Inbound"
+        priority: 300
+        sourceAddressPrefix: "10.1.0.0/16"
+        sourcePortRange: "*"
+        destinationAddressPrefix: "*"
+        destinationPortRange: "179"
+        access: "Allow"
+  
+  # Azure Identity Configuration
+  identityRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: AzureClusterIdentity
+    name: trustram-cluster-identity
+  
+  # Additional Tags for Resource Management
+  additionalTags:
+    "sigs.k8s.io/cluster-api-provider-azure/cluster/trustram-azure-cluster": "owned"
+    "kubernetes.io/cluster/trustram-azure-cluster": "owned"
+    "trustram.io/environment": "production"
+    "trustram.io/version": "v4.4"
+    "trustram.io/multi-cloud": "true"
+    "trustram.io/cost-optimization": "spot-instances"
+
+---
+# Control Plane Configuration
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: trustram-azure-control-plane
+  namespace: default
+spec:
+  # Control Plane Replica Configuration
+  replicas: 3
+  version: v1.28.2
+  
+  # Machine Template Reference
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: AzureMachineTemplate
+      name: azure-control-plane-machine-template
+  
+  # Kubeadm Configuration
+  kubeadmConfigSpec:
+    # Cluster Configuration
+    clusterConfiguration:
+      apiServer:
+        extraArgs:
+          cloud-provider: azure
+          cloud-config: /etc/kubernetes/azure.json
+          enable-admission-plugins: NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook
+          audit-log-maxage: "30"
+          audit-log-maxbackup: "3"
+          audit-log-maxsize: "100"
+          audit-log-path: /var/log/audit.log
+        extraVolumes:
+        - name: cloud-config
+          hostPath: /etc/kubernetes/azure.json
+          mountPath: /etc/kubernetes/azure.json
+          readOnly: true
+          pathType: File
+        timeoutForControlPlane: 20m
+      controllerManager:
+        extraArgs:
+          cloud-provider: azure
+          cloud-config: /etc/kubernetes/azure.json
+          allocate-node-cidrs: "false"
+        extraVolumes:
+        - name: cloud-config
+          hostPath: /etc/kubernetes/azure.json
+          mountPath: /etc/kubernetes/azure.json
+          readOnly: true
+          pathType: File
+      etcd:
+        local:
+          dataDir: /var/lib/etcd
+          extraArgs:
+            listen-metrics-urls: http://0.0.0.0:2381
+      kubernetesVersion: v1.28.2
+      controlPlaneEndpoint: ""
+      networking:
+        podSubnet: 192.168.0.0/16
+        serviceSubnet: 10.96.0.0/12
+    
+    # Init Configuration
+    initConfiguration:
+      nodeRegistration:
+        criSocket: unix:///var/run/containerd/containerd.sock
+        kubeletExtraArgs:
+          cloud-provider: azure
+          cloud-config: /etc/kubernetes/azure.json
+    
+    # Join Configuration
+    joinConfiguration:
+      nodeRegistration:
+        criSocket: unix:///var/run/containerd/containerd.sock
+        kubeletExtraArgs:
+          cloud-provider: azure
+          cloud-config: /etc/kubernetes/azure.json
+    
+    # Pre and Post Kubeadm Commands
+    preKubeadmCommands:
+    - hostnamectl set-hostname "$(curl -s -H Metadata:true http://169.254.169.254/metadata/instance/compute/name?api-version=2021-02-01)"
+    
+    postKubeadmCommands:
+    # Install Azure Cloud Controller Manager
+    - kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/cloud-provider-azure/master/manifests/cloud-controller-manager.yaml
+    
+    # Install Azure Disk CSI Driver
+    - kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/master/deploy/install-driver.yaml
+    
+    # Install Azure File CSI Driver
+    - kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/azurefile-csi-driver/master/deploy/install-driver.yaml
+    
+    # Install Calico CNI
+    - kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
+    
+    # Configure Calico for Azure
+    - |
+      kubectl patch felixconfiguration default --type merge --patch='{"spec":{"ipipEnabled":false,"vxlanEnabled":true,"vxlanVNI":4096}}'
+    
+    # Files for Azure integration
+    files:
+    - path: /etc/kubernetes/azure.json
+      content: |
+        {
+          "cloud": "AzurePublicCloud",
+          "tenantId": "YOUR_TENANT_ID",
+          "subscriptionId": "YOUR_SUBSCRIPTION_ID",
+          "aadClientId": "YOUR_CLIENT_ID",
+          "aadClientSecret": "YOUR_CLIENT_SECRET",
+          "resourceGroup": "trustram-v44-rg",
+          "location": "West US 2",
+          "vmType": "standard",
+          "subnetName": "trustram-node-subnet",
+          "securityGroupName": "trustram-node-nsg",
+          "vnetName": "trustram-vnet",
+          "vnetResourceGroup": "trustram-v44-rg",
+          "routeTableName": "trustram-route-table",
+          "loadBalancerSku": "standard",
+          "maximumLoadBalancerRuleCount": 250,
+          "useManagedIdentityExtension": true,
+          "useInstanceMetadata": true
+        }
+      permissions: "0644"
+
+---
+# Worker Node Machine Deployment
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: trustram-azure-worker-deployment
+  namespace: default
+  labels:
+    cluster.x-k8s.io/cluster-name: trustram-azure-cluster
+spec:
+  clusterName: trustram-azure-cluster
+  replicas: 3
+  
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: trustram-azure-cluster
+      cluster.x-k8s.io/deployment-name: trustram-azure-worker-deployment
+  
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: trustram-azure-cluster
+        cluster.x-k8s.io/deployment-name: trustram-azure-worker-deployment
+    spec:
+      clusterName: trustram-azure-cluster
+      version: v1.28.2
+      
+      # Infrastructure Template
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureMachineTemplate
+        name: azure-worker-machine-template
+      
+      # Bootstrap Configuration
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: trustram-azure-worker-bootstrap
+
+---
+# Worker Bootstrap Configuration Template
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: trustram-azure-worker-bootstrap
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          criSocket: unix:///var/run/containerd/containerd.sock
+          kubeletExtraArgs:
+            cloud-provider: azure
+            cloud-config: /etc/kubernetes/azure.json
+      
+      preKubeadmCommands:
+      - hostnamectl set-hostname "$(curl -s -H Metadata:true http://169.254.169.254/metadata/instance/compute/name?api-version=2021-02-01)"
+      
+      files:
+      - path: /etc/kubernetes/azure.json
+        content: |
+          {
+            "cloud": "AzurePublicCloud",
+            "tenantId": "YOUR_TENANT_ID",
+            "subscriptionId": "YOUR_SUBSCRIPTION_ID",
+            "aadClientId": "YOUR_CLIENT_ID",
+            "aadClientSecret": "YOUR_CLIENT_SECRET",
+            "resourceGroup": "trustram-v44-rg",
+            "location": "West US 2",
+            "vmType": "standard",
+            "subnetName": "trustram-node-subnet",
+            "securityGroupName": "trustram-node-nsg",
+            "vnetName": "trustram-vnet",
+            "vnetResourceGroup": "trustram-v44-rg",
+            "routeTableName": "trustram-route-table",
+            "loadBalancerSku": "standard",
+            "maximumLoadBalancerRuleCount": 250,
+            "useManagedIdentityExtension": true,
+            "useInstanceMetadata": true
+          }
+        permissions: "0644"
+
+---
+# Azure Machine Scale Set (Alternative for Auto-scaling)
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureMachinePool
+metadata:
+  name: trustram-azure-worker-pool
+  namespace: default
+spec:
+  # Location
+  location: "West US 2"
+  
+  # VM Scale Set Configuration
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+      deletePolicy: "Oldest"
+  
+  # VM Configuration
+  template:
+    vmSize: "Standard_D2s_v3"
+    
+    # Spot Instance Configuration for Cost Optimization
+    spotVMOptions:
+      maxPrice: -1  # Use current Spot price
+      evictionPolicy: "Delete"
+    
+    # Operating System Configuration
+    osDisk:
+      osType: "Linux"
+      diskSizeGB: 100
+      managedDisk:
+        storageAccountType: "Standard_LRS"
+      cachingType: "ReadWrite"
+    
+    # VM Image
+    image:
+      marketplace:
+        publisher: "Canonical"
+        offer: "0001-com-ubuntu-server-jammy"
+        sku: "22_04-lts-gen2"
+        version: "latest"
+    
+    # Network Configuration
+    networkInterfaces:
+    - subnetName: "trustram-node-subnet"
+      acceleratedNetworking: true
+    
+    # Enable Managed Identity
+    identity: "SystemAssigned"
+    
+    # Additional Tags
+    additionalTags:
+      "trustram.io/nodepool": "worker"
+      "trustram.io/environment": "production"
+      "trustram.io/cost-optimization": "spot-instances"

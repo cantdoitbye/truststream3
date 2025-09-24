@@ -1,0 +1,241 @@
+# TrustStream v4.2 Deployment Pipeline Configuration
+# Version: 1.0.0
+# Author: MiniMax Agent
+
+apiVersion: v1
+kind: DeploymentPipeline
+metadata:
+  name: truststream-v4.2
+  version: "4.2.0"
+  environment: "{ENVIRONMENT}"
+
+# Global pipeline settings
+pipeline:
+  strategy: blue-green
+  timeout: 1800  # 30 minutes
+  healthCheckRetries: 5
+  healthCheckInterval: 30
+  rollbackTimeout: 300  # 5 minutes
+  
+# Environment configurations
+environments:
+  development:
+    replicas: 1
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+    healthCheck:
+      path: "/health"
+      port: 3000
+      initialDelaySeconds: 30
+      periodSeconds: 10
+    database:
+      migrationTimeout: 600
+      backupEnabled: false
+    
+  staging:
+    replicas: 2
+    resources:
+      requests:
+        cpu: "1000m"
+        memory: "2Gi"
+      limits:
+        cpu: "2000m"
+        memory: "4Gi"
+    healthCheck:
+      path: "/health"
+      port: 3000
+      initialDelaySeconds: 60
+      periodSeconds: 15
+    database:
+      migrationTimeout: 900
+      backupEnabled: true
+    
+  production:
+    replicas: 3
+    resources:
+      requests:
+        cpu: "2000m"
+        memory: "4Gi"
+      limits:
+        cpu: "4000m"
+        memory: "8Gi"
+    healthCheck:
+      path: "/health"
+      port: 3000
+      initialDelaySeconds: 120
+      periodSeconds: 20
+    database:
+      migrationTimeout: 1200
+      backupEnabled: true
+      pointInTimeRecovery: true
+
+# Azure-specific configuration
+azure:
+  resourceGroup: "truststream-v42-{ENVIRONMENT}-rg"
+  location: "eastus"
+  containerRegistry: "truststream42acr"
+  appServicePlan: "truststream-v42-{ENVIRONMENT}-plan"
+  appService: "truststream-v42-{ENVIRONMENT}-app"
+  keyVault: "truststream-v42-{ENVIRONMENT}-kv"
+  storageAccount: "truststream42{ENVIRONMENT}sa"
+  
+# Container configuration
+container:
+  image: "truststream42acr.azurecr.io/truststream-v4.2"
+  tag: "{BUILD_NUMBER}"
+  ports:
+    - containerPort: 3000
+      protocol: TCP
+    - containerPort: 8080
+      protocol: TCP
+  
+# Database migration configuration
+database:
+  migrations:
+    path: "./database/migrations"
+    timeout: 1200
+    rollbackEnabled: true
+    backupBeforeMigration: true
+  
+# Edge functions configuration
+edgeFunctions:
+  supabase:
+    projectRef: "{SUPABASE_PROJECT_REF}"
+    functions:
+      - "ai-leader-accountability-agent"
+      - "ai-leader-quality-agent"
+      - "ai-leader-transparency-agent"
+      - "ai-leader-efficiency-agent"
+      - "ai-leader-innovation-agent"
+      - "agent-coordinator-v4"
+      - "ai-orchestration-engine"
+    deploymentTimeout: 600
+
+# Monitoring configuration
+monitoring:
+  healthChecks:
+    enabled: true
+    endpoints:
+      - path: "/health"
+        expectedStatus: 200
+        timeout: 10
+      - path: "/api/health/database"
+        expectedStatus: 200
+        timeout: 30
+      - path: "/api/health/supabase"
+        expectedStatus: 200
+        timeout: 15
+  
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+    interval: 30
+    
+  alerts:
+    enabled: true
+    channels:
+      - type: "email"
+        config:
+          recipients: ["{ALERT_EMAIL}"]
+      - type: "webhook"
+        config:
+          url: "{WEBHOOK_URL}"
+
+# Rollback configuration
+rollback:
+  enabled: true
+  maxVersionsToKeep: 5
+  automaticTriggers:
+    - healthCheckFailures: 3
+    - errorRate: 0.05  # 5%
+    - responseTime: 5000  # 5 seconds
+  
+# Security configuration
+security:
+  secretsManagement:
+    provider: "azure-keyvault"
+    keyVault: "{AZURE_KEY_VAULT_NAME}"
+  
+  networkPolicies:
+    enabled: true
+    ingressRules:
+      - from:
+          - namespaceSelector:
+              matchLabels:
+                name: "truststream-system"
+        ports:
+          - protocol: TCP
+            port: 3000
+
+# Validation tests configuration
+validation:
+  tests:
+    - name: "health-check"
+      type: "http"
+      config:
+        url: "http://localhost:3000/health"
+        expectedStatus: 200
+        timeout: 10
+    
+    - name: "database-connectivity"
+      type: "database"
+      config:
+        connectionString: "{DATABASE_URL}"
+        timeout: 30
+    
+    - name: "supabase-connectivity"
+      type: "http"
+      config:
+        url: "{SUPABASE_URL}/rest/v1/"
+        headers:
+          apikey: "{SUPABASE_ANON_KEY}"
+        expectedStatus: 200
+        timeout: 15
+    
+    - name: "edge-functions"
+      type: "http"
+      config:
+        url: "{SUPABASE_URL}/functions/v1/ai-leader-quality-agent"
+        method: "POST"
+        headers:
+          Authorization: "Bearer {SUPABASE_ANON_KEY}"
+          Content-Type: "application/json"
+        body: '{"test": true}'
+        expectedStatus: 200
+        timeout: 30
+
+# Notification configuration
+notifications:
+  enabled: true
+  channels:
+    deployment:
+      - type: "slack"
+        config:
+          webhook: "{SLACK_WEBHOOK_URL}"
+          channel: "#deployments"
+      - type: "email"
+        config:
+          recipients: ["{DEPLOYMENT_EMAIL}"]
+    
+    alerts:
+      - type: "pagerduty"
+        config:
+          integrationKey: "{PAGERDUTY_INTEGRATION_KEY}"
+      - type: "email"
+        config:
+          recipients: ["{ALERT_EMAIL}"]
+
+# Backup configuration
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention: 30  # days
+  storage:
+    provider: "azure-blob"
+    container: "truststream-backups"
+    path: "v4.2/{ENVIRONMENT}/{DATE}"

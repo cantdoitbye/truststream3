@@ -1,0 +1,202 @@
+# TrustStream v4.2 ConfigMap
+# Author: MiniMax Agent
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: truststream-config
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    version: v4.2
+    environment: ${ENVIRONMENT}
+data:
+  # Application Configuration
+  NODE_ENV: "${ENVIRONMENT}"
+  PORT: "3000"
+  HOST: "0.0.0.0"
+  ENVIRONMENT: "${ENVIRONMENT}"
+  
+  # Logging Configuration
+  LOG_LEVEL: "${LOG_LEVEL}"
+  LOG_FORMAT: "json"
+  
+  # Performance Configuration
+  NODE_OPTIONS: "--max-old-space-size=4096"
+  UV_THREADPOOL_SIZE: "8"
+  
+  # Database Configuration
+  DATABASE_POOL_SIZE: "${DATABASE_POOL_SIZE}"
+  DATABASE_POOL_TIMEOUT: "30000"
+  DATABASE_IDLE_TIMEOUT: "10000"
+  
+  # Cache Configuration
+  CACHE_ENABLED: "true"
+  CACHE_TTL: "3600"
+  
+  # Rate Limiting
+  RATE_LIMIT_ENABLED: "true"
+  RATE_LIMIT_WINDOW_MS: "900000"
+  RATE_LIMIT_MAX_REQUESTS: "100"
+  
+  # Health Check Configuration
+  HEALTH_CHECK_TIMEOUT: "5000"
+  HEALTH_CHECK_INTERVAL: "30000"
+  
+  # Monitoring Configuration
+  METRICS_ENABLED: "true"
+  METRICS_PORT: "8080"
+  METRICS_PATH: "/metrics"
+  
+  # Security Configuration
+  CORS_ENABLED: "true"
+  CORS_ORIGINS: "${CORS_ORIGINS}"
+  HELMET_ENABLED: "true"
+  
+  # Feature Flags
+  FEATURE_FLAG_AI_AGENTS: "true"
+  FEATURE_FLAG_GOVERNANCE: "true"
+  FEATURE_FLAG_ANALYTICS: "true"
+  FEATURE_FLAG_REAL_TIME: "true"
+  
+  # External Services
+  SUPABASE_URL: "${SUPABASE_URL}"
+  
+  # Version Information
+  APP_VERSION: "4.2.0"
+  BUILD_NUMBER: "${BUILD_NUMBER}"
+  BUILD_DATE: "${BUILD_DATE}"
+  DEPLOYMENT_ID: "${DEPLOYMENT_ID}"
+  
+---
+# Nginx Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: truststream-${ENVIRONMENT}
+  labels:
+    app: truststream
+    component: nginx
+    environment: ${ENVIRONMENT}
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Logging
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+        
+        access_log /var/log/nginx/access.log main;
+        error_log /var/log/nginx/error.log warn;
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_types
+            text/plain
+            text/css
+            text/xml
+            text/javascript
+            application/json
+            application/javascript
+            application/xml+rss
+            application/atom+xml
+            image/svg+xml;
+        
+        # Rate limiting
+        limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+        limit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;
+        
+        # Upstream backend
+        upstream app {
+            server localhost:3000;
+        }
+        
+        server {
+            listen 80;
+            server_name _;
+            
+            # Security headers
+            add_header X-Frame-Options DENY;
+            add_header X-Content-Type-Options nosniff;
+            add_header X-XSS-Protection "1; mode=block";
+            add_header Referrer-Policy strict-origin-when-cross-origin;
+            
+            # Health check endpoint (no rate limiting)
+            location /health {
+                proxy_pass http://app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                access_log off;
+            }
+            
+            # Metrics endpoint (internal only)
+            location /metrics {
+                proxy_pass http://app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                # Restrict access
+                allow 10.0.0.0/8;
+                allow 172.16.0.0/12;
+                allow 192.168.0.0/16;
+                deny all;
+            }
+            
+            # API routes with rate limiting
+            location /api/ {
+                limit_req zone=api burst=20 nodelay;
+                
+                proxy_pass http://app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                # Timeouts
+                proxy_connect_timeout 5s;
+                proxy_send_timeout 60s;
+                proxy_read_timeout 60s;
+            }
+            
+            # Auth routes with stricter rate limiting
+            location /api/auth/ {
+                limit_req zone=login burst=5 nodelay;
+                
+                proxy_pass http://app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+            
+            # Static content
+            location / {
+                proxy_pass http://app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                # Cache static assets
+                location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                    expires 1y;
+                    add_header Cache-Control "public, immutable";
+                    proxy_pass http://app;
+                }
+            }
+        }
+    }
