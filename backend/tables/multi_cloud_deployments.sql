@@ -1,0 +1,21 @@
+CREATE TABLE multi_cloud_deployments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    deployment_name VARCHAR(255) NOT NULL,
+    deployment_type VARCHAR(50) CHECK (deployment_type IN ('application',
+    'service',
+    'infrastructure',
+    'data')),
+    status VARCHAR(50) DEFAULT 'planning' CHECK (status IN ('planning',
+    'deploying',
+    'running',
+    'scaling',
+    'failed',
+    'terminated')),
+    primary_cloud VARCHAR(50) NOT NULL,
+    secondary_clouds JSONB DEFAULT '[]',
+    deployment_config JSONB NOT NULL,
+    cost_optimization_enabled BOOLEAN DEFAULT true,
+    performance_metrics JSONB DEFAULT '{}',
+    created_by UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);

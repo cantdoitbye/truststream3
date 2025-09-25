@@ -1,0 +1,21 @@
+CREATE TABLE quantum_encryption_operations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    operation_type VARCHAR(50) CHECK (operation_type IN ('encrypt',
+    'decrypt',
+    'sign',
+    'verify',
+    'key_generation')),
+    algorithm VARCHAR(50) CHECK (algorithm IN ('ML-KEM-768',
+    'ML-DSA-65',
+    'FALCON',
+    'SPHINCS+')),
+    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending',
+    'processing',
+    'completed',
+    'failed')),
+    processing_time_ms INTEGER DEFAULT 0,
+    key_id VARCHAR(255),
+    operation_metadata JSONB DEFAULT '{}',
+    created_by UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);

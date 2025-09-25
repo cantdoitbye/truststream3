@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "total_requests": 156,
+      "completed_requests": 142,
+      "pending_requests": 8,
+      "processing_requests": 6,
+      "success_rate": "91.0",
+      "average_processing_time_ms": 1240,
+      "request_types": {
+        "shap": 45,
+        "lime": 38,
+        "counterfactual": 29,
+        "feature_importance": 32,
+        "bias_audit": 12
+      },
+      "stakeholder_types": {
+        "end_user": 58,
+        "technical_user": 67,
+        "business_user": 21,
+        "regulator": 10
+      }
+    },
+    "requests": [
+      {
+        "id": "exp-001",
+        "request_type": "shap",
+        "status": "completed",
+        "model_id": "healthcare-ai-v2",
+        "input_data": { "patient_age": 45, "symptoms": ["fever", "cough"] },
+        "stakeholder_type": "end_user",
+        "explanation_result": { "feature_importance": { "age": 0.3, "symptoms": 0.7 } },
+        "processing_time_ms": 850,
+        "created_at": "2025-09-23T09:15:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "version": "4.4.0",
+    "timestamp": "2025-09-23T15:02:00Z",
+    "request_id": "static-api-explainability"
+  }
+}

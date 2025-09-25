@@ -1,0 +1,86 @@
+{
+  "success": true,
+  "data": {
+    "version": "4.4.0",
+    "timestamp": "2025-09-23T15:02:00Z",
+    "status": "operational",
+    "ai_governance": {
+      "total_agents": 15,
+      "active_agents": 12,
+      "average_success_rate": 94.5,
+      "average_response_time_ms": 245,
+      "average_trust_score": 8.7,
+      "agents": [
+        {
+          "id": "agent-001",
+          "agent_name": "Quality Assurance Agent",
+          "agent_type": "quality",
+          "status": "active",
+          "trust_score": 9.2,
+          "success_rate": 96.8,
+          "response_time_ms": 180,
+          "performance_metrics": { "accuracy": 0.96, "efficiency": 0.89 }
+        },
+        {
+          "id": "agent-002",
+          "agent_name": "Transparency Monitor",
+          "agent_type": "transparency",
+          "status": "active",
+          "trust_score": 8.9,
+          "success_rate": 94.2,
+          "response_time_ms": 220,
+          "performance_metrics": { "accuracy": 0.94, "efficiency": 0.92 }
+        }
+      ]
+    },
+    "system_metrics": {
+      "latest_metrics": [
+        { "metric_name": "API Response Time", "metric_value": 145, "metric_unit": "ms", "tags": {} },
+        { "metric_name": "System Uptime", "metric_value": 99.9, "metric_unit": "%", "tags": {} },
+        { "metric_name": "Active Connections", "metric_value": 1247, "metric_unit": "count", "tags": {} }
+      ],
+      "performance_summary": {
+        "api_response_time": 145,
+        "system_throughput": 2340,
+        "system_uptime": 99.9,
+        "test_coverage": 94.2
+      }
+    },
+    "compliance": {
+      "total_frameworks": 8,
+      "compliant_count": 7,
+      "average_score": 92.3,
+      "frameworks": [
+        {
+          "compliance_framework": "GDPR",
+          "compliance_status": "compliant",
+          "compliance_score": 95.2,
+          "last_audit_date": "2025-09-15",
+          "next_audit_date": "2025-12-15"
+        },
+        {
+          "compliance_framework": "EU AI Act",
+          "compliance_status": "compliant",
+          "compliance_score": 89.7,
+          "last_audit_date": "2025-09-10",
+          "next_audit_date": "2025-12-10"
+        }
+      ]
+    },
+    "trust_scoring": {
+      "system_trust_score": 8.7,
+      "trust_dimensions": {
+        "iq_score": 9.1,
+        "appeal_score": 8.4,
+        "social_score": 8.6,
+        "humanity_score": 8.7,
+        "overall_trust_score": 8.7
+      }
+    }
+  },
+  "metadata": {
+    "version": "4.4.0",
+    "timestamp": "2025-09-23T15:02:00Z",
+    "request_id": "static-api-status"
+  }
+}

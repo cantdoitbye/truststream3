@@ -1,0 +1,85 @@
+{
+  "name": "TrustStream",
+  "version": "4.5.0",
+  "release_date": "2025-09-25",
+  "build": "final",
+  "description": "Complete AI-powered platform for workflow automation and agent deployment",
+  "components": {
+    "frontend": {
+      "framework": "React + Vite + TypeScript",
+      "ui_library": "Tailwind CSS + shadcn/ui",
+      "state_management": "Context API + React Query",
+      "build_tool": "Vite",
+      "package_manager": "pnpm"
+    },
+    "backend": {
+      "platform": "Supabase",
+      "runtime": "Deno Edge Functions",
+      "database": "PostgreSQL with RLS",
+      "storage": "Supabase Storage",
+      "auth": "Supabase Auth"
+    },
+    "mcp_server": {
+      "language": "Python 3.8+",
+      "framework": "FastAPI",
+      "ai_integration": "OpenAI + Anthropic + Google AI",
+      "vector_db": "Qdrant",
+      "protocol": "MCP (Model Context Protocol)"
+    },
+    "payment": {
+      "provider": "Stripe",
+      "features": ["One-time payments", "Subscriptions", "Webhooks", "Credits"]
+    }
+  },
+  "features": {
+    "n8n_integration": {
+      "upload": true,
+      "processing": true,
+      "validation": true,
+      "agent_generation": true
+    },
+    "credit_system": {
+      "balance_tracking": true,
+      "payment_processing": true,
+      "usage_analytics": true,
+      "billing_history": true
+    },
+    "agent_deployment": {
+      "hosting": true,
+      "management": true,
+      "monitoring": true,
+      "scaling": true
+    },
+    "chat_to_rag": {
+      "knowledge_base": true,
+      "conversation_management": true,
+      "multi_model_support": true,
+      "cost_optimization": true
+    }
+  },
+  "security": {
+    "authentication": "JWT + RLS",
+    "authorization": "Role-based access control",
+    "data_encryption": "At rest and in transit",
+    "api_security": "Rate limiting + Input validation"
+  },
+  "testing": {
+    "unit_tests": true,
+    "integration_tests": true,
+    "performance_tests": true,
+    "security_tests": true,
+    "e2e_tests": true
+  },
+  "deployment": {
+    "platforms": ["Supabase", "Vercel", "AWS", "Docker"],
+    "environments": ["Development", "Staging", "Production"],
+    "automation": "CI/CD ready"
+  },
+  "documentation": {
+    "setup_guide": true,
+    "api_documentation": true,
+    "deployment_guide": true,
+    "troubleshooting": true,
+    "architecture_overview": true
+  }
+}

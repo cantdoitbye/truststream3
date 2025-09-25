@@ -1,0 +1,22 @@
+CREATE TABLE explainability_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    request_type VARCHAR(50) CHECK (request_type IN ('shap',
+    'lime',
+    'counterfactual',
+    'feature_importance',
+    'bias_audit')),
+    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending',
+    'processing',
+    'completed',
+    'failed')),
+    model_id VARCHAR(255) NOT NULL,
+    input_data JSONB NOT NULL,
+    stakeholder_type VARCHAR(50) CHECK (stakeholder_type IN ('end_user',
+    'technical_user',
+    'business_user',
+    'regulator')),
+    explanation_result JSONB DEFAULT '{}',
+    processing_time_ms INTEGER,
+    created_by UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);

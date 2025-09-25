@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "total_operations": 2840,
+      "completed_operations": 2756,
+      "processing_operations": 12,
+      "failed_operations": 72,
+      "success_rate": "97.0",
+      "average_processing_time_ms": 45,
+      "operation_types": {
+        "encrypt": 985,
+        "decrypt": 942,
+        "sign": 456,
+        "verify": 398,
+        "key_generation": 59
+      },
+      "algorithm_usage": {
+        "ML-KEM-768": 1127,
+        "ML-DSA-65": 854,
+        "FALCON": 456,
+        "SPHINCS+": 403
+      },
+      "quantum_ready_percentage": 97.2
+    },
+    "operations": [
+      {
+        "id": "qop-001",
+        "operation_type": "encrypt",
+        "algorithm": "ML-KEM-768",
+        "status": "completed",
+        "processing_time_ms": 32,
+        "key_id": "qkey-768-001",
+        "operation_metadata": { "data_size": 2048, "encryption_strength": "high" },
+        "created_at": "2025-09-23T13:45:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "version": "4.4.0",
+    "timestamp": "2025-09-23T15:02:00Z",
+    "request_id": "static-api-quantum"
+  }
+}

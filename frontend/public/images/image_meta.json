@@ -1,0 +1,626 @@
+[
+  {
+    "query": "AI explainability visualization showing decision pathways and analysis",
+    "image_info": {
+      "url": "https://www.slideteam.net/media/catalog/product/cache/1280x720/a/r/artificial_intelligence_explainability_360_decision_tree_explainable_ai_applications_slide01.jpg",
+      "file_path": "/workspace/imgs/ai_explainability_360_decision_tree_visualization.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 78889,
+      "width": 1280,
+      "height": 720,
+      "total_pixels": 921600,
+      "basic_score": 0.9277853636376053
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 90.0,
+      "overall_score": 95.0,
+      "explanation": "The image is highly relevant to both the search query and the prompt, depicting a detailed 'Artificial intelligence explainability 360 decision tree'. The visualization clearly shows decision pathways and analytical components of AI explainability. The clarity is excellent, with sharp text and icons. A small instructional text at the bottom is present but does not significantly detract from the image, leading to a high watermark score. The overall design and composition are professional and effective.",
+      "file_name": "ai_explainability_360_decision_tree_visualization.jpg",
+      "caption": "A comprehensive diagram illustrating the 'Artificial intelligence explainability 360 decision tree,' outlining pathways for understanding AI models and data, including local and global explanations, directly interpretable models, post-hoc explanations, and considerations for various stakeholders such as data scientists, decision makers, regulators, and affected users. The flowchart visualizes the analytical process from data and models to different types of explanations and their underlying methods.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "AI explainability visualization showing decision pathways and analysis",
+    "image_info": {
+      "url": "https://paper-attachments.dropbox.com/s_BFFE4A09F6DC2B1D4283B10174F1A42E9AD08F8A70233F89DED078AA81384775_1586766191312_decision_tree_example_blog.jpg",
+      "file_path": "/workspace/imgs/ai_explainability_decision_tree_diagram_pathways_analysis.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 111979,
+      "width": 1500,
+      "height": 843,
+      "total_pixels": 1264500,
+      "basic_score": 0.9196726346397062
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 100.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is a perfect visual representation of a decision tree, directly matching the 'decision tree' and 'decision pathways' aspects of the search query and prompt related to AI explainability. The diagram is exceptionally clear, well-structured, and free of watermarks, making it an excellent resource for illustrating complex AI decision processes.",
+      "file_name": "ai_explainability_decision_tree_diagram_pathways_analysis.jpg",
+      "caption": "A clear, illustrative diagram depicting a decision tree, a fundamental concept in artificial intelligence and machine learning explainability. The tree demonstrates a hierarchical decision-making process, starting from an input 'x' and branching out through various conditions (e.g., 'Has a bun.', 'Has sausage.', 'Meat patty.') leading to distinct classifications or outcomes such as 'Hotdog', 'Burger', 'Super Burger', 'Curly fries', and 'Waffle fries'. This visualization effectively explains decision pathways and logical analysis in an easily understandable format.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "AI explainability visualization showing decision pathways and analysis",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/uploads/20231201153625/Explainable-AI-Concept-2.png",
+      "file_path": "/workspace/imgs/xai_explainable_ai_techniques_decision_tree_flowchart.jpg",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 38613,
+      "width": 650,
+      "height": 620,
+      "total_pixels": 403000,
+      "basic_score": 0.810934449865886
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 100.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is a highly relevant and clear diagram showcasing Explainable AI (XAI) techniques, categorizing them into Transparent and Post-Hoc methods. It explicitly lists 'Decision Trees' under Transparent Methods, directly addressing a key part of the search query. The visualization effectively illustrates different approaches to AI explainability, serving as a 'decision pathway' for choosing techniques. The image is crisp, clean, and free of watermarks, making it an excellent resource.",
+      "file_name": "xai_explainable_ai_techniques_decision_tree_flowchart.jpg",
+      "caption": "A detailed flowchart illustrating various Explainable AI (XAI) techniques, divided into 'Transparent Methods' and 'Post-Hoc Methods'. Transparent Methods include Linear/Logistic Regression, Rule Based Methods, K-Nearest Neighbours, Generalized Additive Models, Decision Trees, and Bayesian Models. Post-Hoc Methods are further categorized into 'Model Agnostic' (e.g., SHAP, LIME, Skater, ELIS, Shapash, Dalex) and 'Model Specific' (e.g., Rule Based Learners, Local Explanation, Feature Relevance, Saliency Map).",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "AI explainability visualization showing decision pathways and analysis",
+    "image_info": {
+      "url": "https://res.cloudinary.com/dayqxxsip/image/upload/v1688561837/App%20Images/Blog%20Images/Article%20Images/Explainable%20AI/decision_tree_p52vix.png",
+      "file_path": "/workspace/imgs/ai_explainability_decision_tree_visualization.jpg",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 226337,
+      "width": 1632,
+      "height": 776,
+      "total_pixels": 1266432,
+      "basic_score": 0.8929660662069129
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 100.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is a perfect match for the search query and prompt, clearly displaying a decision tree which is a key concept in AI explainability. The text within the nodes is highly legible, and the overall structure is professional and easy to understand. There are no watermarks present.",
+      "file_name": "ai_explainability_decision_tree_visualization.jpg",
+      "caption": "A detailed visualization of a decision tree model, demonstrating AI explainability by illustrating the sequential decision pathways and classification analysis. Each node provides insights into features (e.g., Sex, Age, Pclass), gini impurity, sample counts, value distribution, and the predicted class (Survived or Not Survived). The model achieved an accuracy score of 83.43% on 712 training samples, showcasing how artificial intelligence arrives at its conclusions.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "AI explainability visualization showing decision pathways and analysis",
+    "image_info": {
+      "url": "https://admin.binariks.com/storage/2024-06/bin-picture-170624-v01-main.webp",
+      "file_path": "/workspace/imgs/explainable_ai_xai_conceptual_process_diagram_user_understanding.jpg",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 45934,
+      "width": 768,
+      "height": 465,
+      "total_pixels": 357120,
+      "basic_score": 0.8125215622010257
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 80.0,
+      "clarity_score": 95.0,
+      "watermark_score": 80.0,
+      "overall_score": 88.0,
+      "explanation": "The image is a highly relevant and clear conceptual diagram contrasting traditional machine learning with Explainable AI (XAI). It effectively visualizes the user's journey from confusion to understanding with XAI. While it clearly demonstrates AI explainability and the analytical questions it addresses, it does not specifically show a 'decision tree' model or detailed 'decision pathways' within a model as implied by parts of the search query and prompt. There is a small corporate logo in the top right corner.",
+      "file_name": "explainable_ai_xai_conceptual_process_diagram_user_understanding.jpg",
+      "caption": "A conceptual diagram illustrating the evolution from traditional black-box machine learning to Explainable AI (XAI). The 'THEN' section depicts a user questioning opaque decisions from a 'Learned Function,' asking 'HOW?' regarding rationale, success, failure, trust, and error correction. The 'NOW, with XAI' section shows a 'New Machine Learning Process' leading to an 'Explainable Model' and 'Explanation Interface,' resulting in a user who 'GOT IT!' by understanding why, why not, when it succeeds or fails, when to trust, and why errors occurred. This visualization highlights the increased transparency and trustworthiness XAI brings to AI systems.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Quantum encryption security shield with digital elements for dashboard",
+    "image_info": {
+      "url": "https://i0.wp.com/www.namecheap.com/blog/wp-content/uploads/2024/11/Quantum-proof-encryption-Preparing-for-the-future-of-cybersecurity.png?fit=794%2C431&ssl=1",
+      "file_path": "/workspace/imgs/futuristic_quantum_security_digital_shield_visualization.jpg",
+      "img_format": "PNG",
+      "mode": "P",
+      "file_size": 40996,
+      "width": 794,
+      "height": 431,
+      "total_pixels": 342214,
+      "basic_score": 0.7895779737159389
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 95.0,
+      "clarity_score": 100.0,
+      "watermark_score": 100.0,
+      "overall_score": 98.0,
+      "explanation": "The image is exceptionally relevant to the search query, featuring a strong visualization of digital security with futuristic elements. The glowing hedgehog figure serves as a clear focal point representing an encrypted entity or secure system, surrounded by server racks and a structure strongly resembling a quantum computer's cryostat, indicating 'quantum encryption.' Digital shield icons are visible, aligning perfectly with 'security shield.' The overall aesthetic is highly professional, clean, and perfectly fits a 'dashboard' visualization. Clarity is perfect with no watermarks.",
+      "file_name": "futuristic_quantum_security_digital_shield_visualization.jpg",
+      "caption": "A vibrant, futuristic digital visualization illustrating quantum encryption and digital security. A glowing, spiky, hedgehog-like creature stands on a circular platform, acting as a central secure entity. It is surrounded by stylized server racks, floating data cubes, and a large, intricate structure resembling a quantum computer cryostat. The floor features glowing circuit board patterns, and digital security shield icons are subtly visible in the background, all bathed in a cool blue and purple color palette.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Quantum encryption security shield with digital elements for dashboard",
+    "image_info": {
+      "url": "https://blogs.cisco.com/gcs/ciscoblogs/1/2025/07/quantum.png",
+      "file_path": "/workspace/imgs/quantum_encryption_security_digital_shield_visualization.jpg",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 2005187,
+      "width": 1536,
+      "height": 1024,
+      "total_pixels": 1572864,
+      "basic_score": 0.8028216558747654
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 100.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is exceptionally relevant to both the search query and prompt. It clearly visualizes quantum encryption with prominent atom symbols, a layered 'security shield' structure, and futuristic digital elements, making it ideal for a dashboard theme. The clarity is excellent, and there are no watermarks.",
+      "file_name": "quantum_encryption_security_digital_shield_visualization.jpg",
+      "caption": "A futuristic digital illustration depicting quantum encryption and cybersecurity concepts. It features a glowing, layered central structure resembling a data stack or security shield, topped with an atomic symbol, all set against a dark blue background with abstract circuit board lines, wireframe globe, and scattered atom motifs. The design uses vibrant blue, purple, and orange neon glows to convey advanced technology and secure data processing.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Quantum encryption security shield with digital elements for dashboard",
+    "image_info": {
+      "url": "https://images.ctfassets.net/23aumh6u8s0i/3H5sJYPDmKj4FS1BeccX6H/71688f5e4eace3786815ec6f6430a4db/quantum-computer-hero.jpeg",
+      "file_path": "/workspace/imgs/quantum_encryption_security_visualization_futuristic_qubit_sphere_dashboard.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 109950,
+      "width": 1076,
+      "height": 1056,
+      "total_pixels": 1136256,
+      "basic_score": 0.9242366587714106
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 98.0,
+      "watermark_score": 100.0,
+      "overall_score": 97.0,
+      "explanation": "The image is exceptionally relevant, featuring 'QUBIT' text and a Bloch sphere-like representation, directly aligning with 'quantum encryption'. The digital background with binary code, graphs, and icons perfectly fits 'digital security visualization futuristic' and 'digital elements for dashboard'. The clarity is excellent, and there are no watermarks. The overall composition and professional quality are outstanding.",
+      "file_name": "quantum_encryption_security_visualization_futuristic_qubit_sphere_dashboard.jpg",
+      "caption": "A futuristic digital visualization centered around a luminous white sphere resembling a Bloch sphere, surrounded by dotted rings and points, signifying a 'qubit' in quantum computing. The large white letters 'QU' and 'BIT' flank the sphere, explicitly stating 'QUBIT'. The background is a teal-blue with abstract digital interface elements, including binary code snippets '[01101>]', bar graphs, data tables, and generic tech icons like a cloud, email, and star, all contributing to a theme of quantum encryption, digital security, and advanced technology suitable for a dashboard display.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Quantum encryption security shield with digital elements for dashboard",
+    "image_info": {
+      "url": "https://pixelplex.io/wp-content/uploads/2025/02/advantages-of-post-quantum-cryptography-algorithms.jpg",
+      "file_path": "/workspace/imgs/post_quantum_cryptography_advantages_digital_security_visualization.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 53484,
+      "width": 1000,
+      "height": 600,
+      "total_pixels": 600000,
+      "basic_score": 0.8735656719025033
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 100.0,
+      "watermark_score": 70.0,
+      "overall_score": 92.0,
+      "explanation": "The image is highly relevant to the search query and prompt, directly addressing 'post-quantum cryptography' and presenting it as a futuristic digital security visualization suitable for a dashboard. The clarity is excellent with sharp text and icons. There is a subtle 'X' logo in the bottom right corner, which reduces the watermark score. Overall, it's a professional and well-composed graphic.",
+      "file_name": "post_quantum_cryptography_advantages_digital_security_visualization.jpg",
+      "caption": "A futuristic digital infographic on a dark background, illustrating the advantages of post-quantum cryptography algorithms. A central glowing green key icon, representing security and encryption, is surrounded by orbiting green orbs and connecting lines. Five key advantages are presented with corresponding icons: 'Quantum-proof security' (atom icon), 'Compatibility with your current setup' (computer monitor with circuit icon), 'Protection from most kinds of attacks' (shield with warning sign icon), 'Forward security' (shield with upward arrows icon), and 'Multiple lines of defense' (stacked shields icon). The design features bright green text and glowing elements against a black grid pattern, conveying a high-tech and secure theme.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Quantum encryption security shield with digital elements for dashboard",
+    "image_info": {
+      "url": "https://fbi-reports-file.s3.us-west-2.amazonaws.com/fbi_l/img/featured_images/quantum_cryptography_market-01.webp",
+      "file_path": "/workspace/imgs/quantum_cryptography_market_security_dashboard_infographic.jpg",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 114070,
+      "width": 1160,
+      "height": 700,
+      "total_pixels": 812000,
+      "basic_score": 0.9277807717651562
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 95.0,
+      "clarity_score": 90.0,
+      "watermark_score": 50.0,
+      "overall_score": 85.0,
+      "explanation": "The image is highly relevant to both the search query and prompt, effectively visualizing 'quantum encryption digital security' with a futuristic aesthetic and elements suitable for a 'dashboard' style infographic. The central glowing padlock surrounded by circuit patterns strongly conveys a 'security shield with digital elements'. Clarity is excellent, with sharp text and graphics. However, the presence of the 'FORTUNE BUSINESS INSIGHTS' logo is a significant watermark.",
+      "file_name": "quantum_cryptography_market_security_dashboard_infographic.jpg",
+      "caption": "A detailed infographic titled 'QUANTUM CRYPTOGRAPHY MARKET,' showcasing key statistics such as market growth to $1,617.5 Million by 2032 with a 28.8% CAGR, industry developments like QuSecure's partner program, and regional market sizes for North America. The visualization features a central glowing blue digital padlock icon intertwined with circuit board patterns against a dark blue futuristic background, representing quantum digital security. Additional sections highlight market trends, drivers, and segmentation by type, industry (e.g., Healthcare 27.4%), and security type (e.g., Application Security, Cloud Security).",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Dark futuristic enterprise AI platform background with neon blue accents",
+    "image_info": {
+      "url": "https://img.pikbest.com/origin/09/17/44/39cpIkbEsTdJp.jpg!sw800",
+      "file_path": "/workspace/imgs/futuristic_enterprise_ai_dashboard_neon_blue_background.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 109466,
+      "width": 800,
+      "height": 462,
+      "total_pixels": 369600,
+      "basic_score": 0.8182357630241006
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is an excellent match for the search query and prompt. It perfectly captures the 'dark theme' and 'neon blue accents' with its futuristic, digital aesthetic. The abstract lines strongly evoke an 'enterprise AI dashboard' or 'platform background.' Clarity is outstanding, and there are no watermarks.",
+      "file_name": "futuristic_enterprise_ai_dashboard_neon_blue_background.jpg",
+      "caption": "A dark, futuristic digital background characterized by an array of vibrant neon blue vertical light beams extending upwards and reflective horizontal stripes on a dark, glossy surface. This abstract composition creates a sense of depth, technological advancement, and an immersive digital environment, ideal for an enterprise AI dashboard or platform interface.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Dark futuristic enterprise AI platform background with neon blue accents",
+    "image_info": {
+      "url": "https://images.stockcake.com/public/6/3/9/639b1338-0841-44c1-83da-02e5bd836340_large/neon-dashboard-interface-stockcake.jpg",
+      "file_path": "/workspace/imgs/futuristic_enterprise_ai_dashboard_neon_blue_dark_background.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 31420,
+      "width": 672,
+      "height": 384,
+      "total_pixels": 258048,
+      "basic_score": 0.7694480017025764
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 100.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 98.0,
+      "explanation": "The image perfectly matches both the search query and the prompt. It features a clear, futuristic enterprise AI dashboard with a dark theme and prominent neon blue and magenta accents, capturing the desired aesthetic with high quality and clarity. There are no watermarks.",
+      "file_name": "futuristic_enterprise_ai_dashboard_neon_blue_dark_background.jpg",
+      "caption": "A high-quality, futuristic digital dashboard featuring various graphs, data points, and a clock, centrally displayed against a dark background illuminated by vibrant neon blue and magenta circuit-like lines, symbolizing an advanced enterprise AI platform or data interface.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Dark futuristic enterprise AI platform background with neon blue accents",
+    "image_info": {
+      "url": "https://static.vecteezy.com/system/resources/previews/045/584/767/non_2x/technology-infographic-artificial-intelligence-concept-illustration-in-blue-neon-style-on-dark-blue-background-vector.jpg",
+      "file_path": "/workspace/imgs/enterprise_ai_dashboard_neon_blue_futuristic_background.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 81919,
+      "width": 1388,
+      "height": 980,
+      "total_pixels": 1360240,
+      "basic_score": 0.9014316141009158
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 100.0,
+      "clarity_score": 100.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image perfectly matches both the search query and the prompt. It features a dark, futuristic background with prominent neon blue accents, depicting an AI-driven dashboard with an industrial robot arm, an AI chip, data storage, global network, and cloud computing icons. The clarity is excellent as it appears to be a vector illustration, and there are no watermarks. The composition is clean and effectively conveys an 'enterprise AI platform' concept.",
+      "file_name": "enterprise_ai_dashboard_neon_blue_futuristic_background.jpg",
+      "caption": "A futuristic dark blue background featuring a glowing neon blue dashboard graphic. The interface displays an industrial robotic arm, an AI processor chip, a data server icon, a global network representation, and a cloud computing symbol, all interconnected with glowing lines, set against a backdrop of digital patterns and abstract geometric shapes, perfectly embodying an enterprise AI platform or dashboard.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Dark futuristic enterprise AI platform background with neon blue accents",
+    "image_info": {
+      "url": "https://img.freepik.com/premium-photo/dark-blue-ai-generated-technology-background-with-neon-lights_551405-343.jpg",
+      "file_path": "/workspace/imgs/dark_futuristic_ai_dashboard_neon_blue_background.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 70955,
+      "width": 626,
+      "height": 626,
+      "total_pixels": 391876,
+      "basic_score": 0.8222201346453968
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 97.0,
+      "explanation": "The image is an excellent match for both the search query and the prompt. It perfectly embodies a dark, futuristic aesthetic with prominent neon blue accents, ideal for an enterprise AI dashboard or platform background. The clarity is high, and there are no watermarks.",
+      "file_name": "dark_futuristic_ai_dashboard_neon_blue_background.jpg",
+      "caption": "An abstract and futuristic digital background featuring intricate circuit board-like patterns illuminated by vibrant neon blue glowing lines and light effects against a deep dark gray backdrop, suitable for an enterprise AI dashboard or technology platform.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Dark futuristic enterprise AI platform background with neon blue accents",
+    "image_info": {
+      "url": "https://images.stockcake.com/public/d/4/1/d41e1ad1-00b0-451b-8dde-c2c1e5922f4b_large/neon-dashboard-interface-stockcake.jpg",
+      "file_path": "/workspace/imgs/futuristic-enterprise-ai-dashboard-neon-blue-dark-theme.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 28573,
+      "width": 512,
+      "height": 512,
+      "total_pixels": 262144,
+      "basic_score": 0.7726537385110829
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 95.0,
+      "clarity_score": 98.0,
+      "watermark_score": 100.0,
+      "overall_score": 96.0,
+      "explanation": "The image is an excellent match for the search query and prompt, featuring a dark, futuristic interface with prominent neon blue lines and elements, perfectly representing an AI dashboard or platform background. The clarity is superb, and there are no watermarks, contributing to its high overall quality.",
+      "file_name": "futuristic-enterprise-ai-dashboard-neon-blue-dark-theme.jpg",
+      "caption": "A futuristic, dark-themed digital interface featuring glowing neon blue lines and geometric patterns, designed as a heads-up display (HUD) or an enterprise AI dashboard. The screen presents abstract data elements, including a central circular graphic, numerical readouts, and various indicator lights, all set against a deep black, star-flecked background, emphasizing a high-tech, cybernetic aesthetic perfect for an AI platform.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Multi-cloud infrastructure diagram showing AWS Azure GCP connections",
+    "image_info": {
+      "url": "https://www.wipro.com/content/dam/nexus/en/service-lines/global-infrastructure-services/infographics/the-strategy-to-build-secure-multi-cloud-networkin-desktop2.png",
+      "file_path": "/workspace/imgs/multi_cloud_enterprise_network_architecture_aws_azure_gcp_sdwan_diagram.jpg",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 216014,
+      "width": 1000,
+      "height": 744,
+      "total_pixels": 744000,
+      "basic_score": 0.9121214760832513
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 97.0,
+      "explanation": "The image is highly relevant to the search query and prompt, clearly illustrating a multi-cloud enterprise network architecture. It explicitly shows connections to AWS, Azure, and Google Cloud Platform (GCP) along with various SaaS applications. The diagram is professionally designed, highly clear, and free of any watermarks or logos, making it an excellent resource for its intended purpose.",
+      "file_name": "multi_cloud_enterprise_network_architecture_aws_azure_gcp_sdwan_diagram.jpg",
+      "caption": "A detailed network diagram illustrating a multi-cloud enterprise architecture. The diagram features a Cloud Edge connecting to major public cloud providers like AWS, Azure, and Google Cloud, along with SaaS applications such as Workday, Salesforce, Slack, Office 365, and Concur. It also shows a Cloud-based Network and Security component and an SDWAN Fabric providing transport via MPLS, Internet, and Wireless broadband (4G/5G). The WAN Edge connects to on-premise infrastructure including SDDC (Software-Defined Data Centers) across two availability zones, a traditional Datacenter, and a Branch Office, with firewalls securing these connections. Remote users and 3rd party offices are also integrated into this comprehensive network.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Multi-cloud infrastructure diagram showing AWS Azure GCP connections",
+    "image_info": {
+      "url": "https://www.simform.com/wp-content/uploads/2017/11/Multi-Cloud-Rebinding.png",
+      "file_path": "/workspace/imgs/multi-cloud-rebinding-architecture-diagram-aws-azure-migration.jpg",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 90192,
+      "width": 974,
+      "height": 543,
+      "total_pixels": 528882,
+      "basic_score": 0.8528537164806971
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 88.0,
+      "clarity_score": 100.0,
+      "watermark_score": 100.0,
+      "overall_score": 88.0,
+      "explanation": "The image is a high-quality, clear, and professional diagram highly relevant to multi-cloud architecture and migration, featuring AWS and Azure. It clearly shows 'before' and 'after' states for multi-cloud rebinding. Its only drawback is the absence of GCP connections, which was specified in the prompt.",
+      "file_name": "multi-cloud-rebinding-architecture-diagram-aws-azure-migration.jpg",
+      "caption": "A technical diagram titled 'Multi-Cloud Rebinding' illustrating an enterprise architecture transformation in two stages: 'Before Migration' and 'After Migration'. The 'Before Migration' section displays an on-premise platform connected to both AWS (featuring S3 and EC2 services) and Azure (with Azure Storage). The 'After Migration' section shows a reconfigured infrastructure where an on-premise component (AC1) and a new Load Balancer (LB) facilitate dynamic connections. One component (AC2) is depicted as being rebound from potentially on-premise to connect to both the AWS Cloud Platform and the Azure Cloud Platform, demonstrating a multi-cloud orchestration strategy involving Amazon Web Services and Microsoft Azure.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Multi-cloud infrastructure diagram showing AWS Azure GCP connections",
+    "image_info": {
+      "url": "https://www.cisco.com/c/dam/en/us/td/docs/dcn/whitepapers/cisco-hybrid-multicloud-networking-design-guide.docx/_jcr_content/renditions/cisco-hybrid-multicloud-networking-design-guide_0.png",
+      "file_path": "/workspace/imgs/cisco-nexus-multi-cloud-orchestration-aws-azure-enterprise-network-diagram.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 48266,
+      "width": 917,
+      "height": 554,
+      "total_pixels": 508018,
+      "basic_score": 0.8489354822787456
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 90.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 92.0,
+      "explanation": "The image is a clear and detailed network diagram perfectly illustrating multi-cloud orchestration with Cisco Nexus Dashboard Orchestrator, encompassing AWS, Azure, and on-premise enterprise infrastructure. It highly matches the search query. The only minor deviation from the prompt is the absence of Google Cloud Platform (GCP).",
+      "file_name": "cisco-nexus-multi-cloud-orchestration-aws-azure-enterprise-network-diagram.jpg",
+      "caption": "A detailed network architecture diagram illustrating multi-cloud orchestration using Cisco Nexus Dashboard Orchestrator. The diagram shows the orchestrator managing connections between an on-premise enterprise network (including applications, EPG Database, WAN, and branch offices) and public cloud environments, specifically Amazon Web Services (AWS) and Microsoft Azure. Each cloud environment features Cisco Cloud APIC, Cisco Cloud Routers, and EPG Web components within their respective virtual private clouds (VPC1 for AWS, VNet1 for Azure), all interconnected via a central IP Network.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Multi-cloud infrastructure diagram showing AWS Azure GCP connections",
+    "image_info": {
+      "url": "https://www.cisco.com/c/dam/en/us/td/docs/dcn/whitepapers/cisco-hybrid-multicloud-networking-design-guide.docx/_jcr_content/renditions/cisco-hybrid-multicloud-networking-design-guide_7.png",
+      "file_path": "/workspace/imgs/multi_cloud_aws_azure_enterprise_network_diagram.jpg",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 269291,
+      "width": 917,
+      "height": 551,
+      "total_pixels": 505267,
+      "basic_score": 0.8624275546172511
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 85.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 90.0,
+      "explanation": "The image provides a clear and detailed multi-cloud network diagram focusing on AWS and Azure integration, along with enterprise-level connections (WAN, branches, on-premise). This highly aligns with the 'multi cloud orchestration network diagram enterprise' search query. However, it does not include GCP connections as requested in the prompt, leading to a slight reduction in relevance score. The image clarity is excellent, and it contains no watermarks.",
+      "file_name": "multi_cloud_aws_azure_enterprise_network_diagram.jpg",
+      "caption": "A detailed multi-cloud network infrastructure diagram illustrating an enterprise setup that integrates AWS (Amazon Web Services) regions (Region-1, Region-2) with multiple VPCs and Azure (Microsoft Azure) regions (Region-1, Region-2) with VNets. The diagram depicts connections via a central IP Network to branch offices (192.168.81.0/24, 192.168.82.0/24), on-premise data centers (172.16.34/24), and a WAN connection (172.16.0.0/24), highlighting various peering and network pathways necessary for complex multi-cloud orchestration.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Federated learning network diagram with connected nodes for AI platform",
+    "image_info": {
+      "url": "https://media.geeksforgeeks.org/wp-content/uploads/20230717153929/Federated-Learning-(1).png",
+      "file_path": "/workspace/imgs/federated_learning_neural_network_diagram_ai_platform.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 64360,
+      "width": 1000,
+      "height": 653,
+      "total_pixels": 653000,
+      "basic_score": 0.8799350230199557
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 100.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 98.0,
+      "explanation": "The image is an excellent and highly relevant visualization of a federated learning process, perfectly matching the search query and prompt. It clearly illustrates the key steps of model initialization, local training and upload from client devices, and global aggregation. The diagram is clean, well-composed, and free of watermarks.",
+      "file_name": "federated_learning_neural_network_diagram_ai_platform.png",
+      "caption": "A detailed diagram illustrating the three steps of a federated learning process for an AI platform. Step 1 shows initial model 'W'' being distributed from a central server to multiple client devices (smartphone, feature phone, laptop), each representing a user. Step 2 depicts local model training on these devices, where each device trains a neural network on its local data and uploads its updated weights (W1, W2, ..., Wn) to a central cloud server. Step 3 illustrates the global model aggregation and update, where the cloud server aggregates all local weights (W1 to Wn) to form a new global model 'W'' which is then redistributed for the next iteration, completing the learning cycle.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Federated learning network diagram with connected nodes for AI platform",
+    "image_info": {
+      "url": "https://ars.els-cdn.com/content/image/1-s2.0-S2666389922001180-gr1.jpg",
+      "file_path": "/workspace/imgs/federated_learning_network_diagram_ai_platform.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 42611,
+      "width": 499,
+      "height": 334,
+      "total_pixels": 166666,
+      "basic_score": 0.7362798041782831
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image perfectly visualizes a federated learning architecture, showing multiple client nodes (A, B, C) with local models (neural networks) and private data, communicating with a central server. The concept of local training, data privacy (lock icon), and model aggregation is clearly depicted. Clarity is excellent, and there are no watermarks.",
+      "file_name": "federated_learning_network_diagram_ai_platform.jpg",
+      "caption": "A conceptual diagram illustrating a federated learning network. Three client nodes (labeled A, B, C), each represented by a building icon, possess local machine learning models (depicted as neural networks) and private data (represented by chemical structures with lock icons). These client nodes exchange model updates or parameters with a central server, symbolizing the collaborative training process without direct data sharing. Up and down cloud icons further denote data/model transfer.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Federated learning network diagram with connected nodes for AI platform",
+    "image_info": {
+      "url": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41467-022-30714-9/MediaObjects/41467_2022_30714_Fig1_HTML.png",
+      "file_path": "/workspace/imgs/federated_learning_graph_neural_network_privacy_architecture_diagram.jpg",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 109963,
+      "width": 1498,
+      "height": 628,
+      "total_pixels": 940744,
+      "basic_score": 0.8712292931369189
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 100.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is perfectly relevant to the search query and prompt, depicting a federated learning architecture with Graph Neural Networks (GNNs) and privacy-preserving mechanisms. The diagram is clear, well-structured, and professionally presented, with excellent legibility of text and components. No watermarks are present.",
+      "file_name": "federated_learning_graph_neural_network_privacy_architecture_diagram.jpg",
+      "caption": "A detailed network diagram illustrating a privacy-preserving federated learning architecture using Graph Neural Networks (GNNs). The diagram shows user devices with local subgraphs and local GNNs, which perturb and upload model updates to a central learning server. The learning server aggregates these updates to form a global GNN. Additionally, it highlights a privacy-preserving graph expansion mechanism involving a third-party server exchanging user embeddings and encrypted item IDs, along with anonymous neighbor information. This visualization effectively represents a distributed AI platform with a focus on data privacy.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Federated learning network diagram with connected nodes for AI platform",
+    "image_info": {
+      "url": "https://1.bp.blogspot.com/-K65Ed68KGXk/WOa9jaRWC6I/AAAAAAAABsM/gglycD_anuQSp-i67fxER1FOlVTulvV2gCLcB/s1600/FederatedLearning_FinalFiles_Flow%2BChart1.png",
+      "file_path": "/workspace/imgs/federated_learning_network_diagram_ai_platform.jpg_16",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 45097,
+      "width": 1000,
+      "height": 564,
+      "total_pixels": 564000,
+      "basic_score": 0.8568055630210846
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is highly relevant, depicting a clear and concise federated learning network diagram. It illustrates the distributed nature with multiple client devices (phones) contributing to a central aggregation point, which then feeds into a global model represented by the cloud and 'C' node. The arrows clearly show the flow of information, including local training (A) and global model distribution. The hand-drawn, vector-style aesthetics contribute to its excellent clarity and professional quality, with no watermarks present.",
+      "file_name": "federated_learning_network_diagram_ai_platform.jpg",
+      "caption": "An illustrative diagram of a federated learning process. It shows a hand holding a mobile phone (A) representing a client device performing local computations with a circular feedback loop. A large cluster of mobile phones represents numerous distributed client devices. These devices send model updates or data to a central aggregation point (B), depicted as stacks of various colored and shaped cards. This aggregated information then flows into a cloud symbol containing a green diamond, signifying a centralized global model or cloud service. A final node (C), a green diamond, represents the updated global model which is then distributed back to the client devices, completing the iterative cycle of federated learning in an AI platform.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Federated learning network diagram with connected nodes for AI platform",
+    "image_info": {
+      "url": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41598-023-28974-6/MediaObjects/41598_2023_28974_Fig1_HTML.png",
+      "file_path": "/workspace/imgs/federated_learning_network_diagram_secure_ai_platform.jpg",
+      "img_format": "PNG",
+      "mode": "RGB",
+      "file_size": 297413,
+      "width": 1493,
+      "height": 783,
+      "total_pixels": 1169019,
+      "basic_score": 0.9293838843893575
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image is an excellent and highly relevant visualization of a federated learning network. It clearly depicts multiple distributed sites communicating securely with a central aggregator, including specific notations for model parameters (ω) and privacy-preserving noise (Z), which directly addresses 'federated learning' and 'connected nodes for AI platform'. The icons for data, models, and secure systems, including healthcare buildings, strongly align with the theme. Clarity is excellent, and there are no watermarks.",
+      "file_name": "federated_learning_network_diagram_secure_ai_platform.jpg",
+      "caption": "A detailed diagram illustrating the architecture of a federated learning system with four distributed 'Sites' (Site 1-4) interacting with a central orchestrator. Each site processes local data (database and stacked icons) and models (person and network icons), depicted with a hospital building and padlock, signifying applications in sensitive domains like healthcare AI. Local model updates (ω' = ω + Z) are sent to the central entity with added privacy noise (Z), while aggregated global model parameters (ω̄) are received back. The central node, featuring a secure building and network icon, orchestrates the collaborative and decentralized machine learning process.",
+      "recommend": true,
+      "error": ""
+    }
+  }
+]

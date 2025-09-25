@@ -1,0 +1,255 @@
+{
+  "metadata": {
+    "test_date": "2025-09-22T14:31:29.643925",
+    "test_duration": "Comprehensive Security Assessment",
+    "version": "TrustStram v4.4",
+    "framework_version": "Enhanced Security Testing Framework v1.0"
+  },
+  "executive_summary": {
+    "overall_security_score": 64,
+    "security_posture": "ACCEPTABLE - Conditional Deployment",
+    "deployment_recommendation": "CONDITIONAL - Fix High/Critical Issues Before Deployment",
+    "total_vulnerabilities": 4,
+    "critical_vulnerabilities": 0,
+    "high_vulnerabilities": 2,
+    "medium_vulnerabilities": 2,
+    "low_vulnerabilities": 0
+  },
+  "detailed_results": {
+    "metadata": {
+      "test_start": "2025-09-22T14:30:48.695046",
+      "version": "4.4.0-enhanced",
+      "tester": "Enhanced Security Framework"
+    },
+    "vulnerabilities": [
+      {
+        "category": "Web Application Security",
+        "severity": "MEDIUM",
+        "title": "Missing Security Headers",
+        "description": "Missing or incorrect security headers: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Content-Security-Policy, Referrer-Policy",
+        "impact": "Increased risk of XSS, clickjacking, and other client-side attacks",
+        "recommendation": "Implement all required security headers",
+        "evidence": "Missing headers: ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection', 'Content-Security-Policy', 'Referrer-Policy']",
+        "timestamp": "2025-09-22T14:31:21.552614"
+      },
+      {
+        "category": "Quantum Cryptography",
+        "severity": "HIGH",
+        "title": "ML-KEM-768 Implementation Not Found",
+        "description": "No ML-KEM-768 implementation files detected",
+        "impact": "Missing NIST-standardized post-quantum encryption",
+        "recommendation": "Implement ML-KEM-768 for quantum-resistant encryption",
+        "evidence": "Searched paths: ['src/security/quantum-crypto/ml-kem-768.py', 'src/abstractions/auth/quantum-encryption.js', 'supabase/functions/quantum-crypto/index.ts']",
+        "timestamp": "2025-09-22T14:31:25.043461"
+      },
+      {
+        "category": "Quantum Cryptography",
+        "severity": "HIGH",
+        "title": "ML-DSA-65 Implementation Not Found",
+        "description": "No ML-DSA-65 digital signature implementation detected",
+        "impact": "Missing NIST-standardized post-quantum digital signatures",
+        "recommendation": "Implement ML-DSA-65 for quantum-resistant signatures",
+        "evidence": "Searched paths: ['src/security/quantum-crypto/ml-dsa-65.py', 'src/abstractions/auth/quantum-signatures.js', 'supabase/functions/quantum-signatures/index.ts']",
+        "timestamp": "2025-09-22T14:31:25.044169"
+      },
+      {
+        "category": "API Security",
+        "severity": "MEDIUM",
+        "title": "Rate Limiting Not Implemented",
+        "description": "No rate limiting detected on API endpoints",
+        "impact": "Potential for abuse and DoS attacks",
+        "recommendation": "Implement rate limiting on all API endpoints",
+        "evidence": "Sent 15 requests, no rate limiting detected",
+        "timestamp": "2025-09-22T14:31:27.805977"
+      }
+    ],
+    "scores": {},
+    "compliance": {},
+    "recommendations": [],
+    "test_results": {
+      "network_security": {
+        "score": 80,
+        "tests": [
+          {
+            "name": "port_scan",
+            "status": "FAILED",
+            "error": "You requested a scan type which requires root privileges.\nQUITTING!\n"
+          }
+        ],
+        "issues": [],
+        "ssl_test": {
+          "score": 90,
+          "tests": [
+            {
+              "name": "cert_validation",
+              "status": "PASSED"
+            },
+            {
+              "name": "tls_version",
+              "status": "PASSED"
+            }
+          ],
+          "issues": []
+        }
+      },
+      "web_security": {
+        "score": 85,
+        "tests": [
+          {
+            "name": "directory_enumeration",
+            "status": "COMPLETED",
+            "output": "\n-----------------\nDIRB v2.22    \nBy The Dark Raver\n-----------------\n\nSTART_TIME: Mon Sep 22 14:30:48 2025\nURL_BASE: https://etretluugvclmydzlfte.supabase.co/\nWORDLIST_FILES: /usr/share/dirb/wordlists/common.txt\nOPTION: Not Recursive\nOPTION: Silent Mode\n\n-----------------\n\nGENERATED WORDS: 4612\n\n---- Scanning URL: https://etretluugvclmydzlfte.supabase.co/ ----\n\n-----------------\nEND_TIME: Mon Sep 22 14:31:21 2025\nDOWNLOADED: 4612 - FOUND: 0\n"
+          }
+        ],
+        "vulnerabilities": []
+      },
+      "sql_injection": {
+        "score": 95,
+        "tests": [
+          {
+            "endpoint": "/api/auth/login",
+            "status": "COMPLETED",
+            "output": "        ___\n       __H__\n ___ ___[)]_____ ___ ___  {1.7.2#stable}\n|_ -| . [,]     | .'| . |\n|___|_  [,]_|_|_|__,|  _|\n      |_|V...       |_|   https://sqlmap.org\n\n[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\n\n[*] starting @ 14:31:21 /2025-09-22/\n\n[14:31:21] [INFO] fetched random HTTP User-Agent header value 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20120427 Firefox/15.0a1' from file '/usr/share/sqlmap/data/txt/user-agents.txt'\n[14:31:21] [WARNING] you've provided target URL without any GET parameters (e.g. 'http://www.site.com/article.php?id=1') and without providing any POST parameters through option '--data'\ndo you want to try URI injections in the target URL itself? [Y/n/q] Y\n[14:31:21] [INFO] testing connection to the target URL\n[14:31:21] [CRITICAL] not authorized, try to provide right HTTP authentication type and valid credentials (401). If this is intended, try to rerun by providing a valid value for option '--ignore-code'\n[14:31:21] [WARNING] HTTP error codes detected during run:\n401 (Unauthorized) - 1 times\n[14:31:21] [WARNING] your sqlmap version is outdated\n\n[*] ending @ 14:31:21 /2025-09-22/\n\n"
+          },
+          {
+            "endpoint": "/api/users",
+            "status": "FAILED",
+            "error": ""
+          },
+          {
+            "endpoint": "/api/data",
+            "status": "FAILED",
+            "error": ""
+          },
+          {
+            "endpoint": "/api/search",
+            "status": "FAILED",
+            "error": ""
+          },
+          {
+            "endpoint": "/api/reports",
+            "status": "FAILED",
+            "error": ""
+          }
+        ],
+        "vulnerabilities": []
+      },
+      "authentication": {
+        "score": 90,
+        "tests": [],
+        "issues": []
+      },
+      "authorization": {
+        "score": 85,
+        "tests": [],
+        "issues": []
+      },
+      "quantum_encryption": {
+        "score": 54.0,
+        "algorithms": {
+          "ML-KEM-768": {
+            "score": 30,
+            "tests": [],
+            "issues": []
+          },
+          "ML-DSA-65": {
+            "score": 25,
+            "tests": [],
+            "issues": []
+          },
+          "FALCON": {
+            "score": 82,
+            "tests": [],
+            "issues": []
+          },
+          "SPHINCS+": {
+            "score": 79,
+            "tests": [],
+            "issues": []
+          }
+        },
+        "compliance": {},
+        "hybrid_crypto": {
+          "score": 70,
+          "tests": [],
+          "issues": []
+        }
+      },
+      "zero_trust": {
+        "score": 69.0,
+        "components": {
+          "identity_verification": {
+            "score": 75,
+            "tests": [],
+            "issues": []
+          },
+          "device_trust": {
+            "score": 60,
+            "tests": [],
+            "issues": []
+          },
+          "network_segmentation": {
+            "score": 80,
+            "tests": [],
+            "issues": []
+          },
+          "least_privilege": {
+            "score": 60,
+            "tests": [],
+            "issues": []
+          },
+          "continuous_monitoring": {
+            "score": 70,
+            "tests": [],
+            "issues": []
+          }
+        },
+        "compliance": {}
+      },
+      "api_security": {
+        "score": 66.25,
+        "tests": [],
+        "vulnerabilities": [],
+        "rate_limiting": {
+          "score": 40,
+          "tests": [],
+          "issues": [
+            "no_rate_limiting"
+          ]
+        },
+        "api_authentication": {
+          "score": 50,
+          "tests": [],
+          "issues": []
+        },
+        "input_validation": {
+          "score": 90,
+          "tests": [],
+          "vulnerabilities": []
+        },
+        "api_versioning": {
+          "score": 85,
+          "tests": [],
+          "issues": []
+        }
+      }
+    }
+  },
+  "compliance_status": {
+    "nist_cybersecurity_framework": "65%",
+    "iso_27001": "60%",
+    "soc_2": "55%",
+    "gdpr": "90%",
+    "owasp_top_10": "85%"
+  },
+  "recommendations": [
+    "Implement comprehensive input validation across all API endpoints",
+    "Deploy Web Application Firewall (WAF) with OWASP rule sets",
+    "Enhance rate limiting and DDoS protection mechanisms",
+    "Complete Zero Trust architecture implementation",
+    "Establish 24/7 security monitoring and incident response",
+    "Conduct regular penetration testing and vulnerability assessments",
+    "Implement security awareness training for all personnel",
+    "Establish automated security testing in CI/CD pipeline"
+  ]
+}

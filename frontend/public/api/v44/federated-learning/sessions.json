@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "fl-job-001",
+      "job_name": "Healthcare Privacy FL",
+      "job_type": "horizontal",
+      "framework": "flower",
+      "status": "running",
+      "num_clients": 25,
+      "num_rounds": 10,
+      "current_round": 6,
+      "privacy_budget": 8.0,
+      "performance_metrics": { "accuracy": 0.94, "loss": 0.23 },
+      "created_at": "2025-09-22T10:30:00Z"
+    },
+    {
+      "id": "fl-job-002",
+      "job_name": "Financial Model Training",
+      "job_type": "vertical",
+      "framework": "tensorflow_federated",
+      "status": "completed",
+      "num_clients": 15,
+      "num_rounds": 8,
+      "current_round": 8,
+      "privacy_budget": 5.0,
+      "performance_metrics": { "accuracy": 0.91, "loss": 0.18 },
+      "created_at": "2025-09-20T14:15:00Z"
+    }
+  ],
+  "metadata": {
+    "version": "4.4.0",
+    "timestamp": "2025-09-23T15:02:00Z",
+    "request_id": "static-api-fl-sessions"
+  }
+}

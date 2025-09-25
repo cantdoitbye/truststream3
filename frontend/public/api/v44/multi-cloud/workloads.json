@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "deploy-001",
+      "deployment_name": "AI Analytics Platform",
+      "deployment_type": "application",
+      "status": "running",
+      "primary_cloud": "aws",
+      "secondary_clouds": ["azure"],
+      "deployment_config": { "instances": 5, "regions": ["us-east-1", "eu-west-1"] },
+      "cost_optimization_enabled": true,
+      "performance_metrics": { "uptime": 99.9, "response_time": 156 },
+      "created_at": "2025-09-20T08:00:00Z"
+    }
+  ],
+  "metadata": {
+    "version": "4.4.0",
+    "timestamp": "2025-09-23T15:02:00Z",
+    "request_id": "static-api-mc-workloads"
+  }
+}

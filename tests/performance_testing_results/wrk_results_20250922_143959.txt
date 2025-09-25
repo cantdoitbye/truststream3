@@ -1,0 +1,14 @@
+Running 30s test @ http://localhost:3000/api/v44/health
+  12 threads and 400 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   507.93us    9.16ms 452.01ms   99.64%
+    Req/Sec     1.95k     1.61k    6.51k    58.82%
+  Latency Distribution
+     50%  236.00us
+     75%  244.00us
+     90%  251.00us
+     99%  416.00us
+  10476 requests in 30.05s, 2.07MB read
+  Socket errors: connect 0, read 10476, write 0, timeout 0
+Requests/sec:    348.63
+Transfer/sec:     70.47KB

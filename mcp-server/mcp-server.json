@@ -1,0 +1,43 @@
+{
+  "name": "agent_generated_chat_to_rag_agent_creator",
+  "exhibit_name": "Chat-to-RAG Agent Creator",
+  "type": 3,
+  "command": "sh /workspace/chat-to-rag-mcp-server/run.sh",
+  "args": [],
+  "env": {},
+  "description": "Conversational interface for creating RAG-based AI agents with automatic configuration, knowledge base setup, and seamless TrustStream integration. Guides users through requirements gathering, template selection, knowledge base creation, agent generation, and deployment.",
+  "description_for_agent": "MCP server that provides a conversational interface for creating RAG agents. Includes tools for conversation management, requirements analysis, knowledge base creation, agent generation, cost estimation, and TrustStream deployment integration.",
+  "user_params": {
+    "args": {},
+    "env": {
+      "OPENAI_API_KEY": {
+        "required": true,
+        "description": "OpenAI API key for embeddings and language model operations"
+      },
+      "SUPABASE_URL": {
+        "required": true,
+        "description": "Supabase URL for TrustStream backend integration"
+      },
+      "SUPABASE_SERVICE_ROLE_KEY": {
+        "required": true,
+        "description": "Supabase service role key for database operations"
+      },
+      "TRUSTSTREAM_BACKEND_URL": {
+        "required": false,
+        "description": "TrustStream backend URL for enhanced integration features"
+      },
+      "CHROMA_PERSIST_DIRECTORY": {
+        "required": false,
+        "description": "Directory for ChromaDB persistence (default: ./chroma_db)"
+      },
+      "BASE_RAG_COST": {
+        "required": false,
+        "description": "Base cost for RAG operations in ooumph coins (default: 0.01)"
+      },
+      "EMBEDDING_COST_PER_TOKEN": {
+        "required": false,
+        "description": "Cost per token for embedding generation (default: 0.0001)"
+      }
+    }
+  }
+}
